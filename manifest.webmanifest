@@ -1,0 +1,12 @@
+{
+  "name":"ErrandGo",
+  "short_name":"ErrandGo",
+  "description":"Post any errand, find trusted help, get things done anywhere.",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#ffffff",
+  "theme_color":"#8d4dff",
+  "orientation":"portrait-primary",
+  "icons":[]
+}

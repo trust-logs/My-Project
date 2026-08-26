@@ -1,0 +1,11 @@
+{
+  "name": "ErrandGo",
+  "short_name": "ErrandGo",
+  "description": "Get things done. Anywhere.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8d4dff",
+  "orientation": "portrait",
+  "icons": []
+}

@@ -9,10 +9,20 @@ export const supabase = supabaseConfigured ? createClient(url, key, {
   realtime: { params: { eventsPerSecond: 10 } },
 }) : null;
 
+// Never allow initial app boot to hang forever if Supabase is unreachable.
 export async function currentUser() {
   if (!supabase) return null;
-  const { data } = await supabase.auth.getUser();
-  return data.user ?? null;
+  try {
+    // getSession reads the persisted session and normally avoids a network round-trip.
+    const sessionResult = await Promise.race([
+      supabase.auth.getSession(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase session timeout')), 5000)),
+    ]);
+    return sessionResult?.data?.session?.user ?? null;
+  } catch (error) {
+    console.warn('[ErrandGo] Supabase session unavailable:', error?.message || error);
+    return null;
+  }
 }
 
 export async function signIn(email, password) {

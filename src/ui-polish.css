@@ -33,3 +33,89 @@ button,.limeBtn,.whiteBtn{font-family:var(--eg-font);-webkit-tap-highlight-color
 .toast{font-size:11px;line-height:1.2;max-width:calc(100% - 30px);text-align:center}
 .emptyState{padding:28px 12px!important;text-align:center}.emptyState h3{font-size:14px}.emptyState p{font-size:10px;line-height:1.5}
 @media(max-width:520px){.content{padding:12px 16px 96px}.heroCopy{width:63%}.heroCard h2{font-size:22px}.quickGrid{gap:7px}.quickGrid button{min-height:101px;padding:10px 7px}.quickGrid b{font-size:9.5px}.quickGrid small{font-size:8px}.two{grid-template-columns:1fr 1fr!important;gap:9px!important}.infoCard label input,.infoCard label textarea,.infoCard label select{font-size:13px!important}}
+
+/* --------------------------------------------------------------------------
+   ErrandGo final page-by-page polish
+   Only visual rules: no business logic or data behaviour is changed.
+   -------------------------------------------------------------------------- */
+
+/* Shared page rhythm and icon treatment */
+.content>.pageTitle>svg,.content>.pageTitle>button>svg{color:#8d4dff;stroke-width:2}
+.pageTitle>button.whiteBtn{min-height:36px;padding:8px 11px;border:1px solid #e6def1;background:#fff}
+
+/* Explore: cleaner filters, result count and cards */
+.filterRow{padding:2px 1px 4px}
+.filterRow button{background:#fff;transition:background .18s,border-color .18s,color .18s,transform .18s}
+.filterRow button:active{transform:scale(.97)}
+.filterRow .active{box-shadow:0 4px 12px rgba(141,77,255,.12)}
+.earnBanner{border:1px solid #e2d8f2;box-shadow:0 7px 18px rgba(63,35,92,.06)}
+
+/* Errand details: stronger hierarchy and action grouping */
+.detail{padding-top:5px}
+.detailArt{box-shadow:0 10px 25px rgba(74,45,103,.08)}
+.detailPrice{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
+.detailPrice small,.detailPrice strong,.detailPrice span{grid-column:1}
+.detailPrice strong{margin:2px 0 0}
+.detailPrice span{grid-column:1/-1;margin-top:2px}
+.detailPrice:after{content:'SECURE';grid-column:2;grid-row:1/4;align-self:center;padding:7px 9px;border-radius:10px;background:#f0ffdf;color:#4f9707;font-size:8px;font-weight:900;letter-spacing:.5px}
+.application{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #eee8f3}
+.application:first-of-type{margin-top:9px}
+.application>div{min-width:0;flex:1}
+.application b,.application small{display:block}.application b{font-size:11px}.application small{font-size:8px;color:#8b8592;margin-top:2px}.application p{font-size:9px!important;margin:5px 0 0!important}
+.application .limeBtn{min-height:36px;flex:none}
+
+/* Wallet and withdrawal: one coherent financial card system */
+.walletActions{gap:9px}
+.walletActions button{min-height:48px!important;border-radius:14px!important;border:1px solid #e6deef!important;background:#fff!important;box-shadow:0 4px 13px rgba(48,28,67,.04)!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;color:#4d4656!important;font-weight:850!important}
+.walletActions button svg{width:17px;color:#8d4dff}
+.walletActions button:hover{border-color:#d7c5f0!important;transform:translateY(-1px)}
+.content>.infoCard:has(+ *){box-shadow:0 7px 20px rgba(52,29,72,.045)}
+
+/* Profile: keep all controls in the same visual family */
+.profileMenu{display:grid;gap:8px;margin-top:15px}
+.profileMenu button{background:#fff;border:1px solid #e8e1ef!important;border-radius:15px!important;box-shadow:0 4px 13px rgba(48,28,67,.035);display:flex;align-items:center;gap:10px}
+.profileMenu button>svg:last-child{margin-left:auto;color:#b1aab8;width:17px}
+.profileMenu span{display:grid!important;place-items:center;border-radius:10px;background:#f2ebff;color:#8d4dff}
+.profileMenu span svg{width:17px}
+
+/* Notifications: readable unread/read hierarchy */
+.taskCard:has(.taskLine span:last-child){align-items:flex-start}
+.taskCard .taskLine span:last-child{white-space:nowrap}
+.taskCard:has(.taskLine span:last-child){transition:background .18s,border-color .18s}
+
+/* Chat: real conversation UI, not a generic form */
+.conversationList{display:grid;gap:8px;margin-bottom:12px}
+.conversationList>button{width:100%;min-height:66px;display:flex;align-items:center;gap:10px;text-align:left;padding:10px 11px;background:#fff;border:1px solid #e8e1ef;border-radius:16px;box-shadow:0 4px 13px rgba(48,28,67,.04);transition:.18s}
+.conversationList>button:hover,.conversationList>button.active{border-color:#d8c5f4;background:#fbf9ff;box-shadow:0 7px 18px rgba(88,52,120,.08)}
+.conversationList>button>div:nth-child(2){min-width:0;flex:1}.conversationList b,.conversationList small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.conversationList b{font-size:11px}.conversationList small{font-size:9px;color:#8d8794;margin-top:3px}.conversationList>button>svg{width:16px;color:#b4acbb}
+.chatPanel{border:1px solid #e7e0ee;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 8px 22px rgba(50,28,70,.06)}
+.chatHeader{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid #eee8f3;background:#fcfaff}.chatHeader b,.chatHeader small{display:block}.chatHeader b{font-size:11px}.chatHeader small{font-size:8px;color:#8d8794;margin-top:2px}
+.chatBox{min-height:280px;max-height:390px;overflow:auto;padding:14px 11px;background:linear-gradient(180deg,#fbf9ff,#fff)}
+.chatBox .bubble{max-width:82%;width:max-content;padding:9px 11px;margin:5px 0;border-radius:14px 14px 14px 5px;background:#f0ebf7;color:#322d3a;font-size:10px;line-height:1.4;box-shadow:0 2px 6px rgba(48,28,67,.035)}
+.chatBox .bubble.mine{margin-left:auto;border-radius:14px 14px 5px 14px;background:#8d4dff;color:#fff}
+.chatBox .bubble small{display:block;margin-top:4px;font-size:7px;opacity:.65}
+.chatForm{display:flex;gap:8px;padding:9px;border-top:1px solid #eee8f3;background:#fff}
+.chatForm input{flex:1;min-width:0;height:43px;border:1px solid #ddd6e7;border-radius:12px;background:#fbfafe;padding:10px 12px;font-size:12px;outline:none}.chatForm input:focus{border-color:#8d4dff;box-shadow:0 0 0 3px rgba(141,77,255,.10);background:#fff}.chatForm .limeBtn{width:44px;height:43px;padding:0;border-radius:12px;flex:none}
+
+/* Empty states: remove the old warning-triangle visual entirely. */
+.emptyState>svg,.infoCard:has(>svg:first-child)>.emptyState>svg{display:none!important}
+.emptyState:before{content:'✦';width:52px;height:52px;margin:0 auto 11px;border-radius:16px;background:linear-gradient(145deg,#efe6ff,#e1ffd0);color:#8d4dff;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:0 8px 18px rgba(88,52,120,.09)}
+.emptyState h3{margin:0 0 4px;font-weight:850}.emptyState p{margin:0;color:#77717f}
+
+/* Support: turn the page into a calm, structured help form */
+.content .infoCard>input:not([type]),.content .infoCard>textarea{display:block;width:100%;margin:9px 0 12px;padding:11px 12px;border:1px solid #ddd6e7;border-radius:12px;background:#fbfafe;color:#292433;font-size:13px;outline:none}.content .infoCard>textarea{min-height:110px;resize:vertical}.content .infoCard>input:focus,.content .infoCard>textarea:focus{border-color:#8d4dff;box-shadow:0 0 0 3px rgba(141,77,255,.10);background:#fff}
+
+/* Admin: compact dashboard tiles */
+.content .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.content .stats>div{border:1px solid #e8e1ef;border-radius:15px;background:#fff;padding:13px 8px;box-shadow:0 4px 13px rgba(48,28,67,.035)}
+.content .stats b{display:block;font-weight:900}.content .stats small{display:block;color:#8d8794;margin-top:2px}
+
+/* Responsive finishing touches */
+@media(max-width:520px){
+  .detailPrice:after{font-size:7px;padding:6px 7px}
+  .chatBox{min-height:260px;max-height:52vh}
+  .conversationList>button{min-height:62px}
+  .application{gap:8px}
+  .application .limeBtn{padding:8px 9px}
+}
+@media(prefers-reduced-motion:reduce){.conversationList>button,.walletActions button{transition:none}.taskCard{transform:none!important}}

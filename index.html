@@ -13,6 +13,40 @@
     <title>ErrandGo — Get Things Done. Anywhere.</title>
     <style>
       .loading { display: none !important; }
+
+      /* Chat UX: there is no message composer until a real conversation/message exists. */
+      .chatBox:not(:has(.bubble)) + .chatForm {
+        display: none !important;
+      }
+      .chatBox:not(:has(.bubble)) {
+        min-height: 330px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chatBox:not(:has(.bubble)) .infoCard {
+        width: 100%;
+        margin: 0;
+        background: #fbf9ff;
+        border-color: #e8e0f5;
+        border-radius: 20px;
+        padding: 28px 20px;
+      }
+      .chatBox:not(:has(.bubble)) .infoCard svg {
+        width: 38px;
+        height: 38px;
+        color: #8d4dff;
+        margin-bottom: 8px;
+      }
+      .chatBox:not(:has(.bubble)) .infoCard p {
+        margin: 7px 0 0;
+        font-size: 11px;
+        line-height: 1.5;
+        color: #77717f;
+      }
+      .chatForm:has(input:placeholder-shown) {
+        transition: opacity .2s ease;
+      }
     </style>
   </head>
   <body>

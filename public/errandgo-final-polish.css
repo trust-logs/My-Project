@@ -1,0 +1,6 @@
+/* Final visual cleanup for ErrandGo empty/error states. No functionality changes. */
+.infoCard:has(> svg:first-child){text-align:center!important;padding:28px 16px!important;background:#fbf9ff!important;border-color:#e8e0f5!important;border-radius:20px!important}
+.infoCard:has(> svg:first-child)>svg{display:none!important}
+.infoCard:has(> svg:first-child):before{content:'✦';display:grid;place-items:center;width:54px;height:54px;margin:0 auto 12px;border-radius:17px;background:linear-gradient(145deg,#efe6ff,#e1ffd0);color:#8d4dff;font-size:25px;font-weight:900;box-shadow:0 8px 18px rgba(88,52,120,.09)}
+.infoCard:has(> svg:first-child)>p{margin:0;color:#77717f;font-size:10.5px;line-height:1.55}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}

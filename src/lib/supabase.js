@@ -10,7 +10,6 @@ export const supabase = supabaseConfigured ? createClient(url, key, {
   realtime: { params: { eventsPerSecond: 10 } },
 }) : null;
 
-// Never allow initial app boot to hang forever if Supabase is unreachable.
 export async function currentUser() {
   if (!supabase) return null;
   try {
@@ -37,6 +36,12 @@ const countryOptions = getCountries()
 
 function setupPhoneSignupUI() {
   if (typeof document === 'undefined') return;
+  if (!document.getElementById('eg-phone-signup-style')) {
+    const style = document.createElement('style');
+    style.id = 'eg-phone-signup-style';
+    style.textContent = `.egPhoneField{margin:0 0 14px}.egPhoneField>label{display:block;font-weight:600;color:#252338;font-size:14px}.egPhoneRow{display:grid;grid-template-columns:minmax(138px,42%) 1fr;gap:8px;margin-top:7px}.egPhoneRow select,.egPhoneRow input{width:100%;min-width:0;box-sizing:border-box;height:46px;border:1px solid #ddd8ea;border-radius:13px;background:#fff;padding:0 12px;font:inherit;color:#252338;outline:none}.egPhoneRow select:focus,.egPhoneRow input:focus{border-color:#8b4dff;box-shadow:0 0 0 3px rgba(139,77,255,.12)}.egPhoneHint{display:block;margin-top:6px;color:#858196;font-size:11px;font-weight:400}`;
+    document.head.appendChild(style);
+  }
   const ensure = () => {
     const modal = [...document.querySelectorAll('.postModal')].find((el) => /Create your account/i.test(el.textContent || ''));
     if (!modal || modal.querySelector('[data-eg-phone-field]')) return;

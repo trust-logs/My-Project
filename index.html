@@ -14,10 +14,8 @@
     <style>
       .loading { display: none !important; }
 
-      /* Chat UX: there is no message composer until a real conversation/message exists. */
-      .chatBox:not(:has(.bubble)) + .chatForm {
-        display: none !important;
-      }
+      /* No conversation = no composer. */
+      .chatBox:not(:has(.bubble)) + .chatForm { display: none !important; }
       .chatBox:not(:has(.bubble)) {
         min-height: 330px;
         display: flex;
@@ -31,6 +29,7 @@
         border-color: #e8e0f5;
         border-radius: 20px;
         padding: 28px 20px;
+        text-align: center;
       }
       .chatBox:not(:has(.bubble)) .infoCard svg {
         width: 38px;
@@ -44,13 +43,22 @@
         line-height: 1.5;
         color: #77717f;
       }
-      .chatForm:has(input:placeholder-shown) {
-        transition: opacity .2s ease;
-      }
     </style>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Remove the old local-only test message that caused an empty chat screen
+      // to look like an active conversation. Real conversations belong in Supabase.
+      try {
+        const old = JSON.parse(localStorage.getItem('eg_chat') || '[]');
+        if (Array.isArray(old) && old.some(m => !m.conversation_id)) {
+          localStorage.removeItem('eg_chat');
+        }
+      } catch (_) {
+        localStorage.removeItem('eg_chat');
+      }
+    </script>
     <script type="module" src="./src/main.jsx"></script>
   </body>
 </html>

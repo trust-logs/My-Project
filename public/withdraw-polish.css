@@ -1,0 +1,77 @@
+/* ErrandGo — wallet withdrawal polish only */
+.walletCard + .walletActions + .infoCard {
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid #eadfff;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(88, 55, 150, .08);
+}
+
+.walletCard + .walletActions + .infoCard h3 {
+  margin: 0 0 7px;
+  color: #29243a;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.walletCard + .walletActions + .infoCard p {
+  margin: 0 0 14px;
+  color: #817a8d;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.walletCard + .walletActions + .infoCard input[type="number"] {
+  display: block;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  margin: 0 0 12px;
+  padding: 0 16px;
+  border: 1.5px solid #e4d9f7;
+  border-radius: 16px;
+  outline: none;
+  background: #fbf9ff;
+  color: #2b2540;
+  font: 700 18px/1 inherit;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.walletCard + .walletActions + .infoCard input[type="number"]::placeholder {
+  color: #a39bad;
+  font-weight: 500;
+}
+
+.walletCard + .walletActions + .infoCard input[type="number"]:focus {
+  border-color: #8d4dff;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(141, 77, 255, .10);
+}
+
+.walletCard + .walletActions + .infoCard input[type="number"]::-webkit-inner-spin-button,
+.walletCard + .walletActions + .infoCard input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  opacity: .45;
+}
+
+.walletCard + .walletActions + .infoCard .fullBtn {
+  min-height: 52px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px rgba(139, 236, 0, .20);
+}
+
+@media (max-width: 480px) {
+  .walletCard + .walletActions + .infoCard {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .walletCard + .walletActions + .infoCard input[type="number"] {
+    height: 54px;
+    font-size: 17px;
+  }
+}

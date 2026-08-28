@@ -1,0 +1,27 @@
+:root{--eg-purple:#8d4dff;--eg-purple-dark:#5e2bc5;--eg-lime:#9cff00;--eg-ink:#17162a}
+.eg-state-art{width:108px;height:92px;margin:0 auto 14px;position:relative;display:grid;place-items:center;perspective:600px;animation:egFloat 3.2s ease-in-out infinite}
+.eg-state-art *{box-sizing:border-box}
+.eg-orb{position:absolute;width:76px;height:76px;border-radius:28px;background:linear-gradient(145deg,#b88cff,#6d36dc);box-shadow:inset 8px 8px 16px rgba(255,255,255,.3),inset -10px -12px 18px rgba(50,10,100,.3),0 14px 30px rgba(108,54,220,.25);transform:rotateX(14deg) rotateZ(-5deg);}
+.eg-orb:before{content:"";position:absolute;width:25px;height:10px;border-radius:50%;background:rgba(255,255,255,.2);top:13px;left:15px;transform:rotate(-18deg)}
+.eg-orb:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:4px solid rgba(43,17,91,.25);right:13px;bottom:14px}
+.eg-dot{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--eg-lime);box-shadow:0 0 18px rgba(156,255,0,.8);right:8px;top:10px;animation:egPulse 1.8s infinite}
+.eg-ring{position:absolute;width:94px;height:30px;border:3px solid rgba(141,77,255,.32);border-radius:50%;transform:rotateX(62deg) rotateZ(-12deg);animation:egSpin 5s linear infinite}
+.eg-symbol{position:relative;z-index:2;font-size:34px;filter:drop-shadow(0 7px 5px rgba(45,18,90,.2));transform:translateZ(25px);animation:egBob 2.2s ease-in-out infinite}
+.eg-mini{position:absolute;width:25px;height:25px;border-radius:9px;background:#fff;box-shadow:0 7px 15px rgba(38,22,70,.15);display:grid;place-items:center;font-size:13px;z-index:3}
+.eg-mini.one{left:1px;bottom:8px;animation:egOrbit 3.5s ease-in-out infinite}.eg-mini.two{right:0;bottom:4px;animation:egOrbit2 4s ease-in-out infinite}
+.eg-state-art.offline .eg-symbol:after{content:"⌁";position:absolute;color:#fff;font-weight:900;font-size:23px;left:7px;top:4px;transform:rotate(-25deg)}
+.eg-state-art.server .eg-orb{border-radius:20px;height:66px;width:82px}.eg-state-art.server .eg-symbol{font-size:30px}.eg-state-art.server .eg-dot{right:18px;top:17px}
+.eg-state-art.notfound .eg-symbol{font-size:32px}.eg-state-art.notfound .eg-ring{transform:rotateX(62deg) rotateZ(18deg)}
+.eg-state-art.locked .eg-orb{border-radius:50%;width:72px;height:72px}.eg-state-art.locked .eg-symbol{font-size:31px}
+.eg-state-art.search .eg-symbol{font-size:38px}.eg-state-art.empty .eg-symbol{font-size:35px}.eg-state-art.loading .eg-symbol{font-size:35px}.eg-state-art.loading .eg-orb{animation:egRotate 2.2s linear infinite}.eg-state-art.rate .eg-symbol{font-size:37px}
+.eg-state-caption{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8d4dff;margin:-3px 0 7px}
+.infoCard.eg-state-card>svg:first-child{display:none!important}
+.infoCard.eg-state-card{overflow:hidden}
+@keyframes egFloat{0%,100%{transform:translateY(0) rotateZ(0)}50%{transform:translateY(-5px) rotateZ(1deg)}}
+@keyframes egBob{0%,100%{transform:translateZ(25px) translateY(0)}50%{transform:translateZ(35px) translateY(-5px)}}
+@keyframes egPulse{0%,100%{transform:scale(.85);opacity:.75}50%{transform:scale(1.15);opacity:1}}
+@keyframes egSpin{to{transform:rotateX(62deg) rotateZ(348deg)}}
+@keyframes egRotate{to{transform:rotateY(360deg)}}
+@keyframes egOrbit{50%{transform:translate(5px,-7px) rotate(8deg)}}
+@keyframes egOrbit2{50%{transform:translate(-5px,-8px) rotate(-8deg)}}
+@media(prefers-reduced-motion:reduce){.eg-state-art,.eg-state-art *{animation:none!important}}

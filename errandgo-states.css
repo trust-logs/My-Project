@@ -1,0 +1,6 @@
+/* ErrandGo contextual state visuals. Safe, visual-only defaults. */
+.eg-state{display:grid;place-items:center;text-align:center;min-height:180px;padding:24px;border-radius:20px;background:linear-gradient(145deg,#fbf9ff,#f7fff0);border:1px solid #e8e0f5}
+.eg-state-icon{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;margin-bottom:12px;background:linear-gradient(145deg,#efe6ff,#e1ffd0);color:#8d4dff;box-shadow:0 10px 22px rgba(88,52,120,.1);animation:eg-float 3s ease-in-out infinite}
+.eg-state h3{margin:0 0 5px;font:850 15px/1.2 Inter,Nunito,system-ui,sans-serif;color:#292433}.eg-state p{margin:0;color:#77717f;font:500 11px/1.5 Inter,Nunito,system-ui,sans-serif}
+@keyframes eg-float{50%{transform:translateY(-5px) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.eg-state-icon{animation:none}}

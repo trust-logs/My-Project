@@ -1,0 +1,9 @@
+/* ErrandGo stable 3D state animation. CSS-only, no external assets. */
+.eg-state,.emptyState{perspective:700px}
+.eg-state-icon{position:relative;transform-style:preserve-3d;backface-visibility:visible;animation:eg-3d-float 4s ease-in-out infinite}
+.eg-state-icon::before{content:"";position:absolute;inset:9px;border-radius:14px;background:linear-gradient(145deg,#fff,#eadcff);box-shadow:7px 7px 0 rgba(141,77,255,.12),-4px -4px 0 rgba(255,255,255,.9);transform:translateZ(8px) rotateX(10deg) rotateY(-12deg);pointer-events:none}
+.eg-state-icon::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:#8d4dff;font-size:25px;font-weight:900;transform:translateZ(18px);text-shadow:0 3px 7px rgba(88,52,120,.18);pointer-events:none}
+.emptyState::before{content:"✦";width:54px;height:54px;margin:0 auto 12px;border-radius:16px;background:linear-gradient(145deg,#fff,#e7d9ff 55%,#dfffbd);color:#8d4dff;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:8px 8px 0 rgba(141,77,255,.10),0 12px 24px rgba(88,52,120,.12);transform-style:preserve-3d;animation:eg-empty-3d 4s ease-in-out infinite}
+@keyframes eg-3d-float{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-8deg)}25%{transform:translateY(-5px) rotateX(5deg) rotateY(8deg)}50%{transform:translateY(-7px) rotateX(-3deg) rotateY(12deg)}75%{transform:translateY(-4px) rotateX(4deg) rotateY(-4deg)}}
+@keyframes eg-empty-3d{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-6deg) rotateZ(0deg)}50%{transform:translateY(-7px) rotateX(8deg) rotateY(10deg) rotateZ(1deg)}}
+@media(prefers-reduced-motion:reduce){.eg-state-icon,.emptyState::before{animation:none;transform:none}}

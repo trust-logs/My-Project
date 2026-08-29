@@ -1,0 +1,6 @@
+/* ErrandGo final polish compatibility layer. Visual-only. */
+:root{--eg-purple:#8d4dff;--eg-lime:#dfffbd;--eg-border:#e8e1ef}
+button,input,textarea,select{font-family:Inter,Nunito,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.card,.panel,.infoCard,.taskCard{box-sizing:border-box}
+img,svg{max-width:100%}
+@media(max-width:520px){.pageTitle{gap:9px}.content{overflow-x:hidden}.infoCard,.taskCard{max-width:100%}}

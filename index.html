@@ -14,39 +14,15 @@
     <link rel="stylesheet" href="./errandgo-states.css" />
     <link rel="stylesheet" href="./errandgo-final-polish.css" />
     <link rel="stylesheet" href="./errandgo-whatsapp-chat.css" />
+    <link rel="stylesheet" href="./errandgo-3d-states.css" />
     <title>ErrandGo — Get Things Done. Anywhere.</title>
     <style>
       .loading { display: none !important; }
-
-      /* No conversation = no composer. */
       .chatBox:not(:has(.bubble)) + .chatForm { display: none !important; }
-      .chatBox:not(:has(.bubble)) {
-        min-height: 330px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .chatBox:not(:has(.bubble)) .infoCard {
-        width: 100%;
-        margin: 0;
-        background: #fbf9ff;
-        border-color: #e8e0f5;
-        border-radius: 20px;
-        padding: 28px 20px;
-        text-align: center;
-      }
-      .chatBox:not(:has(.bubble)) .infoCard svg {
-        width: 38px;
-        height: 38px;
-        color: #8d4dff;
-        margin-bottom: 8px;
-      }
-      .chatBox:not(:has(.bubble)) .infoCard p {
-        margin: 7px 0 0;
-        font-size: 11px;
-        line-height: 1.5;
-        color: #77717f;
-      }
+      .chatBox:not(:has(.bubble)) { min-height: 330px; display: flex; align-items: center; justify-content: center; }
+      .chatBox:not(:has(.bubble)) .infoCard { width: 100%; margin: 0; background: #fbf9ff; border-color: #e8e0f5; border-radius: 20px; padding: 28px 20px; text-align: center; }
+      .chatBox:not(:has(.bubble)) .infoCard svg { width: 38px; height: 38px; color: #8d4dff; margin-bottom: 8px; }
+      .chatBox:not(:has(.bubble)) .infoCard p { margin: 7px 0 0; font-size: 11px; line-height: 1.5; color: #77717f; }
     </style>
   </head>
   <body>
@@ -54,14 +30,9 @@
     <script>
       try {
         const old = JSON.parse(localStorage.getItem('eg_chat') || '[]');
-        if (Array.isArray(old) && old.some(m => !m.conversation_id)) {
-          localStorage.removeItem('eg_chat');
-        }
-      } catch (_) {
-        localStorage.removeItem('eg_chat');
-      }
+        if (Array.isArray(old) && old.some(m => !m.conversation_id)) localStorage.removeItem('eg_chat');
+      } catch (_) { localStorage.removeItem('eg_chat'); }
     </script>
-    <script src="./errandgo-states.js" defer></script>
     <script type="module" src="./src/main.jsx"></script>
   </body>
 </html>

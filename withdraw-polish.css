@@ -1,0 +1,5 @@
+/* ErrandGo withdrawal page polish. Visual-only; safe fallback layer. */
+.withdrawCard,.withdraw-form,.withdraw-panel{border-radius:20px;border:1px solid #e7def2;background:#fff;box-shadow:0 8px 24px rgba(63,35,92,.06)}
+.withdrawCard input,.withdraw-form input,.withdraw-panel input{width:100%;min-height:48px;border:1px solid #ddd6e7;border-radius:14px;background:#fbfafe;padding:12px 14px;color:#292433;font:600 14px/1.3 Inter,Nunito,system-ui,sans-serif;outline:none}
+.withdrawCard input:focus,.withdraw-form input:focus,.withdraw-panel input:focus{border-color:#8d4dff;box-shadow:0 0 0 3px rgba(141,77,255,.1);background:#fff}
+@media(max-width:520px){.withdrawCard,.withdraw-form,.withdraw-panel{border-radius:17px}.withdrawCard input,.withdraw-form input,.withdraw-panel input{min-height:46px}}

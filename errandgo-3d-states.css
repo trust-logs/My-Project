@@ -1,9 +1,13 @@
-/* ErrandGo stable 3D state animation. CSS-only, no external assets. */
-.eg-state,.emptyState{perspective:700px}
-.eg-state-icon{position:relative;transform-style:preserve-3d;backface-visibility:visible;animation:eg-3d-float 4s ease-in-out infinite}
-.eg-state-icon::before{content:"";position:absolute;inset:9px;border-radius:14px;background:linear-gradient(145deg,#fff,#eadcff);box-shadow:7px 7px 0 rgba(141,77,255,.12),-4px -4px 0 rgba(255,255,255,.9);transform:translateZ(8px) rotateX(10deg) rotateY(-12deg);pointer-events:none}
-.eg-state-icon::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:#8d4dff;font-size:25px;font-weight:900;transform:translateZ(18px);text-shadow:0 3px 7px rgba(88,52,120,.18);pointer-events:none}
-.emptyState::before{content:"✦";width:54px;height:54px;margin:0 auto 12px;border-radius:16px;background:linear-gradient(145deg,#fff,#e7d9ff 55%,#dfffbd);color:#8d4dff;display:grid;place-items:center;font-size:24px;font-weight:900;box-shadow:8px 8px 0 rgba(141,77,255,.10),0 12px 24px rgba(88,52,120,.12);transform-style:preserve-3d;animation:eg-empty-3d 4s ease-in-out infinite}
-@keyframes eg-3d-float{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-8deg)}25%{transform:translateY(-5px) rotateX(5deg) rotateY(8deg)}50%{transform:translateY(-7px) rotateX(-3deg) rotateY(12deg)}75%{transform:translateY(-4px) rotateX(4deg) rotateY(-4deg)}}
-@keyframes eg-empty-3d{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-6deg) rotateZ(0deg)}50%{transform:translateY(-7px) rotateX(8deg) rotateY(10deg) rotateZ(1deg)}}
-@media(prefers-reduced-motion:reduce){.eg-state-icon,.emptyState::before{animation:none;transform:none}}
+/* ErrandGo robust 3D state visuals — no warning triangle fallback */
+.eg-state,.emptyState{perspective:900px;perspective-origin:50% 45%}
+.eg-state-icon{position:relative!important;width:72px!important;height:72px!important;border-radius:22px!important;display:grid!important;place-items:center!important;overflow:visible!important;transform-style:preserve-3d!important;animation:eg-3d-float 4.5s ease-in-out infinite!important;background:transparent!important;box-shadow:none!important;color:transparent!important}
+/* Never display a Lucide warning/triangle inside an ErrandGo state icon. */
+.eg-state-icon>svg{display:none!important}
+.eg-state-icon::before{content:"";position:absolute;inset:8px;border-radius:20px;background:linear-gradient(145deg,#ffffff 0%,#eadcff 52%,#dfffbd 100%);border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16),inset -5px -5px 10px rgba(141,77,255,.08);transform:translateZ(10px) rotateX(10deg) rotateY(-14deg);pointer-events:none}
+.eg-state-icon::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:#8d4dff;font:900 28px/1 system-ui,sans-serif;transform:translateZ(28px);text-shadow:0 4px 9px rgba(88,52,120,.22);pointer-events:none}
+.emptyState{position:relative;transform-style:preserve-3d}
+.emptyState::before{content:"✦";width:64px;height:64px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(145deg,#ffffff 0%,#eadcff 52%,#dfffbd 100%);color:#8d4dff;display:grid;place-items:center;font:900 28px/1 system-ui,sans-serif;border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16);transform-style:preserve-3d;animation:eg-empty-3d 4.5s ease-in-out infinite}
+.emptyState>svg,.emptyState .alert-triangle,.emptyState [data-lucide="alert-triangle"]{display:none!important}
+@keyframes eg-3d-float{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-10deg) scale(1)}25%{transform:translateY(-5px) rotateX(7deg) rotateY(9deg) scale(1.02)}50%{transform:translateY(-9px) rotateX(-5deg) rotateY(14deg) scale(1.035)}75%{transform:translateY(-4px) rotateX(5deg) rotateY(-5deg) scale(1.02)}}
+@keyframes eg-empty-3d{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-7deg) rotateZ(0deg)}50%{transform:translateY(-8px) rotateX(8deg) rotateY(11deg) rotateZ(1deg)}}
+@media(prefers-reduced-motion:reduce){.eg-state-icon,.emptyState::before{animation:none!important;transform:none!important}}

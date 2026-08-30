@@ -1,13 +1,20 @@
-/* ErrandGo robust 3D state visuals — no warning triangle fallback */
-.eg-state,.emptyState{perspective:900px;perspective-origin:50% 45%}
-.eg-state-icon{position:relative!important;width:72px!important;height:72px!important;border-radius:22px!important;display:grid!important;place-items:center!important;overflow:visible!important;transform-style:preserve-3d!important;animation:eg-3d-float 4.5s ease-in-out infinite!important;background:transparent!important;box-shadow:none!important;color:transparent!important}
-/* Never display a Lucide warning/triangle inside an ErrandGo state icon. */
-.eg-state-icon>svg{display:none!important}
-.eg-state-icon::before{content:"";position:absolute;inset:8px;border-radius:20px;background:linear-gradient(145deg,#ffffff 0%,#eadcff 52%,#dfffbd 100%);border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16),inset -5px -5px 10px rgba(141,77,255,.08);transform:translateZ(10px) rotateX(10deg) rotateY(-14deg);pointer-events:none}
-.eg-state-icon::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:#8d4dff;font:900 28px/1 system-ui,sans-serif;transform:translateZ(28px);text-shadow:0 4px 9px rgba(88,52,120,.22);pointer-events:none}
-.emptyState{position:relative;transform-style:preserve-3d}
-.emptyState::before{content:"✦";width:64px;height:64px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(145deg,#ffffff 0%,#eadcff 52%,#dfffbd 100%);color:#8d4dff;display:grid;place-items:center;font:900 28px/1 system-ui,sans-serif;border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16);transform-style:preserve-3d;animation:eg-empty-3d 4.5s ease-in-out infinite}
-.emptyState>svg,.emptyState .alert-triangle,.emptyState [data-lucide="alert-triangle"]{display:none!important}
+/* ErrandGo 3D state visuals — replaces the warning triangle in every task-list empty state. */
+.eg-state,.emptyState{perspective:900px;perspective-origin:50% 45%;}
+.eg-state-icon{position:relative!important;width:72px!important;height:72px!important;border-radius:22px!important;display:grid!important;place-items:center!important;overflow:visible!important;transform-style:preserve-3d!important;animation:eg-3d-float 4.5s ease-in-out infinite!important;background:transparent!important;box-shadow:none!important;color:transparent!important;}
+.eg-state-icon>svg{display:none!important;}
+.eg-state-icon::before{content:"";position:absolute;inset:8px;border-radius:20px;background:linear-gradient(145deg,#fff 0%,#eadcff 52%,#dfffbd 100%);border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16),inset -5px -5px 10px rgba(141,77,255,.08);transform:translateZ(10px) rotateX(10deg) rotateY(-14deg);pointer-events:none;}
+.eg-state-icon::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:#8d4dff;font:900 28px/1 system-ui,sans-serif;transform:translateZ(28px);text-shadow:0 4px 9px rgba(88,52,120,.22);pointer-events:none;}
+.emptyState{position:relative;transform-style:preserve-3d;}
+.emptyState::before{content:"✦";width:64px;height:64px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(145deg,#fff 0%,#eadcff 52%,#dfffbd 100%);color:#8d4dff;display:grid;place-items:center;font:900 28px/1 system-ui,sans-serif;border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16);transform-style:preserve-3d;animation:eg-empty-3d 4.5s ease-in-out infinite;}
+.emptyState>svg,.emptyState .alert-triangle,.emptyState [data-lucide="alert-triangle"]{display:none!important;}
+
+/* The real Empty() component uses .infoCard directly inside .taskList. */
+.taskList>.infoCard{position:relative;overflow:visible;perspective:900px;transform-style:preserve-3d;text-align:center;}
+.taskList>.infoCard>svg{display:none!important;}
+.taskList>.infoCard::before{content:"";display:block;width:66px;height:66px;margin:0 auto 14px;border-radius:20px;background:linear-gradient(145deg,#fff 0%,#eadcff 50%,#dfffbd 100%);border:1px solid rgba(141,77,255,.18);box-shadow:10px 12px 0 rgba(141,77,255,.09),0 18px 32px rgba(88,52,120,.16),inset -5px -5px 10px rgba(141,77,255,.08);transform-style:preserve-3d;animation:eg-empty-3d 4.5s ease-in-out infinite;}
+.taskList>.infoCard::after{content:"✦";position:absolute;left:50%;top:28px;width:66px;height:66px;display:grid;place-items:center;color:#8d4dff;font:900 28px/1 system-ui,sans-serif;transform:translateX(-50%) translateZ(28px);text-shadow:0 4px 9px rgba(88,52,120,.22);pointer-events:none;animation:eg-star-3d 4.5s ease-in-out infinite;}
+
 @keyframes eg-3d-float{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-10deg) scale(1)}25%{transform:translateY(-5px) rotateX(7deg) rotateY(9deg) scale(1.02)}50%{transform:translateY(-9px) rotateX(-5deg) rotateY(14deg) scale(1.035)}75%{transform:translateY(-4px) rotateX(5deg) rotateY(-5deg) scale(1.02)}}
-@keyframes eg-empty-3d{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-7deg) rotateZ(0deg)}50%{transform:translateY(-8px) rotateX(8deg) rotateY(11deg) rotateZ(1deg)}}
-@media(prefers-reduced-motion:reduce){.eg-state-icon,.emptyState::before{animation:none!important;transform:none!important}}
+@keyframes eg-empty-3d{0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-7deg)}50%{transform:translateY(-8px) rotateX(8deg) rotateY(11deg) rotateZ(1deg)}}
+@keyframes eg-star-3d{0%,100%{transform:translateX(-50%) translateZ(28px) rotateY(-7deg)}50%{transform:translateX(-50%) translateZ(34px) rotateY(11deg)}}
+@media(prefers-reduced-motion:reduce){.eg-state-icon,.emptyState::before,.taskList>.infoCard::before,.taskList>.infoCard::after{animation:none!important;transform:none!important;}}

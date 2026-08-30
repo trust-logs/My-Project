@@ -23,29 +23,18 @@ case'eg-3d-lock':return '<div class="eg-lock-3d"><i></i><b></b></div>';
 case'eg-3d-check':return '<div class="eg-check-3d">✓</div>';
 case'eg-3d-repair':return '<div class="eg-repair-3d">⚒</div>';
 default:return '<div class="eg-package-3d"><i></i><b></b><em></em></div>';}}
-function pageText(){
-return Array.from(document.querySelectorAll('h1,h2,h3,[role="heading"],.pageTitle,.sectionTitle'))
-.map(x=>(x.textContent||'').trim().toLowerCase()).join(' ');
-}
-function classify(el){
-if(!el||!el.matches('.infoCard,.emptyState,.eg-empty-state'))return;
-const text=(el.textContent||'').toLowerCase();
-const heading=pageText();
-const combined=heading+' '+text;
-const isEmpty=el.classList.contains('emptyState')||el.classList.contains('eg-empty-state')||!!el.querySelector('svg');
-if(!isEmpty)return;
-el.classList.remove(...rules.map(r=>r[2]));
-let found=null;
-/* Page heading wins over generic empty-card wording. */
-for(const[,words,cls]of rules){if(words.some(w=>heading.includes(w))){found=cls;break;}}
-if(!found){for(const[,words,cls]of rules){if(words.some(w=>combined.includes(w))){found=cls;break;}}}
-const cls=found||'eg-3d-package';
-el.classList.add(cls,'eg-contextual-3d');
-el.querySelectorAll('svg,.alert-triangle,[data-lucide="alert-triangle"]').forEach(x=>x.remove());
-const old=el.querySelector('.eg3d-scene');
-if(old && !old.classList.contains(cls)){old.remove();}
-if(!el.querySelector('.eg3d-scene')){const scene=document.createElement('div');scene.className='eg3d-scene '+cls;scene.setAttribute('aria-hidden','true');scene.innerHTML=markup(cls);el.insertBefore(scene,el.firstChild);}}
+function pageText(){return Array.from(document.querySelectorAll('h1,h2,h3,[role="heading"],.pageTitle,.sectionTitle')).map(x=>(x.textContent||'').trim().toLowerCase()).join(' ')}
+function classify(el){if(!el||!el.matches('.infoCard,.emptyState,.eg-empty-state'))return;const text=(el.textContent||'').toLowerCase(),heading=pageText(),combined=heading+' '+text,isEmpty=el.classList.contains('emptyState')||el.classList.contains('eg-empty-state')||!!el.querySelector('svg');if(!isEmpty)return;el.classList.remove(...rules.map(r=>r[2]));let found=null;for(const[,words,cls]of rules){if(words.some(w=>heading.includes(w))){found=cls;break}}if(!found){for(const[,words,cls]of rules){if(words.some(w=>combined.includes(w))){found=cls;break}}}const cls=found||'eg-3d-package';el.classList.add(cls,'eg-contextual-3d');el.querySelectorAll('svg,.alert-triangle,[data-lucide="alert-triangle"]').forEach(x=>x.remove());const old=el.querySelector('.eg3d-scene');if(old&&!old.classList.contains(cls))old.remove();if(!el.querySelector('.eg3d-scene')){const scene=document.createElement('div');scene.className='eg3d-scene '+cls;scene.setAttribute('aria-hidden','true');scene.innerHTML=markup(cls);el.insertBefore(scene,el.firstChild)}}
 function scan(){document.querySelectorAll('.infoCard,.emptyState,.eg-empty-state').forEach(classify)}
-const start=()=>{scan();new MutationObserver(scan).observe(document.body,{subtree:true,childList:true,characterData:true})};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+const start=()=>{scan();new MutationObserver(scan).observe(document.body,{subtree:true,childList:true,characterData:true})};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();
+
+/* Load the production ratings/reviews widget after the React app is present. */
+(function(){
+  function load(){
+    if(document.getElementById('eg-reviews-widget-script'))return;
+    const css=document.createElement('link');css.rel='stylesheet';css.href='./reviews-polish.css?v=1';document.head.appendChild(css);
+    const s=document.createElement('script');s.id='eg-reviews-widget-script';s.src='./reviews-widget.js?v=1';s.defer=true;document.body.appendChild(s);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,250));else setTimeout(load,250);
 })();

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="./errandgo-final-polish.css" />
     <link rel="stylesheet" href="./errandgo-whatsapp-chat.css" />
     <link rel="stylesheet" href="./errandgo-3d-states.css" />
-    <link rel="stylesheet" href="./errandgo-contextual-3d.css" />
+    <link rel="stylesheet" href="./errandgo-contextual-3d.css?v=3" />
     <title>ErrandGo — Get Things Done. Anywhere.</title>
     <style>
       .loading { display: none !important; }
@@ -24,6 +24,30 @@
       .chatBox:not(:has(.bubble)) .infoCard { width: 100%; margin: 0; background: #fbf9ff; border-color: #e8e0f5; border-radius: 20px; padding: 28px 20px; text-align: center; }
       .chatBox:not(:has(.bubble)) .infoCard svg { width: 38px; height: 38px; color: #8d4dff; margin-bottom: 8px; }
       .chatBox:not(:has(.bubble)) .infoCard p { margin: 7px 0 0; font-size: 11px; line-height: 1.5; color: #77717f; }
+
+      /* Guaranteed contextual empty-state 3D visuals. These are intentionally CSS-built, not warning icons. */
+      .eg-force-scene{width:86px;height:86px;margin:0 auto 16px;display:grid;place-items:center;position:relative;perspective:700px;transform-style:preserve-3d;animation:eg-force-float 3.8s ease-in-out infinite}
+      .eg-force-scene>*{transform-style:preserve-3d}
+      .eg-force-chat .eg-orb{width:58px;height:48px;border-radius:20px 20px 20px 8px;background:linear-gradient(145deg,#b978ff,#7d43ef);box-shadow:10px 12px 0 rgba(83,42,145,.18),0 18px 28px rgba(83,42,145,.22);transform:rotateX(10deg) rotateY(-18deg);position:relative}
+      .eg-force-chat .eg-orb:after{content:'';position:absolute;right:7px;bottom:-7px;border-width:9px 0 0 12px;border-style:solid;border-color:transparent transparent transparent #7040d5;transform:rotate(-8deg)}
+      .eg-force-chat .eg-orb:before{content:'•••';letter-spacing:4px;position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:16px;font-weight:900;transform:translateY(-2px)}
+      .eg-force-bell .eg-orb{width:48px;height:52px;border-radius:26px 26px 12px 12px;background:linear-gradient(145deg,#b978ff,#7d43ef);box-shadow:9px 12px 0 rgba(83,42,145,.18),0 18px 28px rgba(83,42,145,.22);transform:rotateX(8deg) rotateY(-16deg)}
+      .eg-force-bell .eg-orb:after{content:'';position:absolute;left:17px;bottom:-9px;width:15px;height:8px;border-radius:50%;background:#6e3bd0}
+      .eg-force-wallet .eg-orb{width:62px;height:44px;border-radius:10px;background:linear-gradient(145deg,#9d61ff,#7137dc);box-shadow:10px 12px 0 rgba(83,42,145,.18),0 18px 28px rgba(83,42,145,.22);transform:rotateX(9deg) rotateY(-17deg)}
+      .eg-force-wallet .eg-orb:after{content:'₦';position:absolute;right:-5px;top:12px;width:25px;height:18px;border-radius:6px;background:#baff19;color:#243000;font-weight:900;display:grid;place-items:center;box-shadow:2px 3px 0 rgba(0,0,0,.12)}
+      .eg-force-star .eg-orb,.eg-force-heart .eg-orb{font-size:54px;font-weight:900;line-height:1;filter:drop-shadow(9px 11px 0 rgba(83,42,145,.16)) drop-shadow(0 15px 20px rgba(83,42,145,.18));transform:rotateX(12deg) rotateY(-18deg)}
+      .eg-force-star .eg-orb{color:#9b5cff}.eg-force-heart .eg-orb{color:#9b5cff}
+      .eg-force-package .eg-orb{width:54px;height:50px;background:linear-gradient(145deg,#c18aff,#7841dc);box-shadow:9px 12px 0 rgba(83,42,145,.18),0 18px 28px rgba(83,42,145,.22);transform:rotateX(10deg) rotateY(-18deg);position:relative}
+      .eg-force-package .eg-orb:before{content:'';position:absolute;left:50%;top:0;width:3px;height:100%;background:#d9bdff;transform:translateX(-50%)}
+      .eg-force-package .eg-orb:after{content:'';position:absolute;left:13px;top:8px;width:28px;height:3px;background:#d9bdff;transform:rotate(28deg)}
+      .eg-force-globe .eg-orb{width:58px;height:58px;border-radius:50%;border:4px solid #8d4dff;box-shadow:inset -9px -7px 0 rgba(141,77,255,.12),8px 12px 0 rgba(83,42,145,.12),0 18px 28px rgba(83,42,145,.18);transform:rotateX(12deg) rotateY(-18deg);position:relative}
+      .eg-force-globe .eg-orb:before{content:'';position:absolute;left:12px;right:12px;top:25px;height:4px;border-radius:50%;background:#8d4dff;box-shadow:0 -13px 0 -1px rgba(141,77,255,.7),0 13px 0 -1px rgba(141,77,255,.7)}
+      .eg-force-lock .eg-orb{width:48px;height:40px;border-radius:9px;background:linear-gradient(145deg,#a96aff,#7137dc);box-shadow:9px 12px 0 rgba(83,42,145,.18),0 18px 28px rgba(83,42,145,.22);transform:rotateX(10deg) rotateY(-17deg);position:relative;margin-top:15px}
+      .eg-force-lock .eg-orb:before{content:'';position:absolute;width:27px;height:27px;border:6px solid #8d4dff;border-bottom:0;border-radius:20px 20px 0 0;left:4px;top:-25px}
+      .eg-force-check .eg-orb{width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#baff19,#72d900);color:#223000;font-size:42px;font-weight:1000;display:grid;place-items:center;box-shadow:9px 12px 0 rgba(83,42,145,.14),0 18px 28px rgba(83,42,145,.18);transform:rotateX(12deg) rotateY(-18deg)}
+      .eg-force-repair .eg-orb{font-size:54px;color:#8d4dff;filter:drop-shadow(9px 11px 0 rgba(83,42,145,.16));transform:rotateX(12deg) rotateY(-18deg)}
+      @keyframes eg-force-float{0%,100%{transform:translateY(0) rotateZ(-1deg)}50%{transform:translateY(-8px) rotateZ(1deg)}}
+      @media(prefers-reduced-motion:reduce){.eg-force-scene{animation:none}}
     </style>
   </head>
   <body>
@@ -34,7 +58,35 @@
         if (Array.isArray(old) && old.some(m => !m.conversation_id)) localStorage.removeItem('eg_chat');
       } catch (_) { localStorage.removeItem('eg_chat'); }
     </script>
-    <script src="./errandgo-contextual-3d.js"></script>
+    <script src="./errandgo-contextual-3d.js?v=3"></script>
     <script type="module" src="./src/main.jsx"></script>
+    <script>
+      /* Emergency DOM-level replacement: removes the actual AlertTriangle rendered by Empty(). */
+      (() => {
+        const classify = (el) => {
+          if (!el || !el.matches('.infoCard,.emptyState,.eg-empty-state')) return;
+          const svg = el.querySelector('svg');
+          if (!svg) return;
+          const text = (el.textContent || '').toLowerCase();
+          const looksEmpty = /no chats|sign in to chat|all caught up|no messages|don't have any|saved errands will|sign in to use|sign in to see|saved errands will appear|no applications|error|failed|something went wrong|connection|offline/.test(text);
+          if (!looksEmpty) return;
+          const type = /chat|message|conversation/.test(text) ? 'chat' : /notification|caught up/.test(text) ? 'bell' : /wallet|money|fund|balance|withdraw/.test(text) ? 'wallet' : /rating|review/.test(text) ? 'star' : /saved/.test(text) ? 'heart' : /internet|offline|connection/.test(text) ? 'globe' : /sign in|login|account|authentication/.test(text) ? 'lock' : /success|completed|complete/.test(text) ? 'check' : /error|failed|something went wrong/.test(text) ? 'repair' : 'package';
+          if (!el.querySelector('.eg-force-scene')) {
+            const scene = document.createElement('div');
+            scene.className = 'eg-force-scene eg-force-' + type;
+            scene.setAttribute('aria-hidden','true');
+            const orb = document.createElement('div');
+            orb.className = 'eg-orb';
+            orb.textContent = type === 'star' ? '★' : type === 'heart' ? '♥' : type === 'check' ? '✓' : type === 'repair' ? '⚒' : '';
+            scene.appendChild(orb);
+            el.insertBefore(scene, el.firstChild);
+          }
+          svg.remove();
+        };
+        const scan = () => document.querySelectorAll('.infoCard,.emptyState,.eg-empty-state').forEach(classify);
+        scan();
+        new MutationObserver(scan).observe(document.body,{subtree:true,childList:true,characterData:true});
+      })();
+    </script>
   </body>
 </html>

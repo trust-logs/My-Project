@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./errandgo-final-polish.css" />
     <link rel="stylesheet" href="./errandgo-whatsapp-chat.css" />
     <link rel="stylesheet" href="./errandgo-3d-states.css" />
+    <link rel="stylesheet" href="./errandgo-contextual-3d.css" />
     <title>ErrandGo — Get Things Done. Anywhere.</title>
     <style>
       .loading { display: none !important; }
@@ -33,6 +34,7 @@
         if (Array.isArray(old) && old.some(m => !m.conversation_id)) localStorage.removeItem('eg_chat');
       } catch (_) { localStorage.removeItem('eg_chat'); }
     </script>
+    <script src="./errandgo-contextual-3d.js"></script>
     <script type="module" src="./src/main.jsx"></script>
   </body>
 </html>

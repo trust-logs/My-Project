@@ -1,16 +1,16 @@
-/* ErrandGo contextual 3D empty/error states. */
+/* ErrandGo contextual 3D empty/error states — deterministic page mapping. */
 (function(){
 const rules=[
-['chat',['no chats','no chat','conversation','messages','chat'],'eg-3d-chat'],
-['notification',['caught up','notification','notifications'],'eg-3d-bell'],
-['wallet',['wallet','money','fund','balance','withdraw'],'eg-3d-wallet'],
-['rating',['rating','review','reviews'],'eg-3d-star'],
+['chat',['chat','messages','conversation'],'eg-3d-chat'],
+['notification',['notification','notifications','caught up'],'eg-3d-bell'],
+['wallet',['wallet','your money','balance','withdraw','fund'],'eg-3d-wallet'],
+['rating',['rating','ratings','review','reviews'],'eg-3d-star'],
 ['saved',['saved errands','saved','save'],'eg-3d-heart'],
-['errand',['errand','task','tasks','applications','application'],'eg-3d-package'],
+['errand',['errand','errands','task','tasks','applications','application'],'eg-3d-package'],
 ['internet',['internet','offline','connection','network'],'eg-3d-globe'],
-['auth',['sign in','login','account','authentication'],'eg-3d-lock'],
-['success',['success','completed','complete'],'eg-3d-check'],
-['error',['error','failed','something went wrong'],'eg-3d-repair']
+['auth',['sign in','login','account','authentication','register','sign up'],'eg-3d-lock'],
+['success',['success','successful','completed','complete'],'eg-3d-check'],
+['error',['error','failed','failure','something went wrong'],'eg-3d-repair']
 ];
 function markup(c){switch(c){
 case'eg-3d-chat':return '<div class="eg-chat-orb"><i></i><i></i></div><span class="eg-chat-dot"></span>';
@@ -23,15 +23,27 @@ case'eg-3d-lock':return '<div class="eg-lock-3d"><i></i><b></b></div>';
 case'eg-3d-check':return '<div class="eg-check-3d">✓</div>';
 case'eg-3d-repair':return '<div class="eg-repair-3d">⚒</div>';
 default:return '<div class="eg-package-3d"><i></i><b></b><em></em></div>';}}
+function pageText(){
+return Array.from(document.querySelectorAll('h1,h2,h3,[role="heading"],.pageTitle,.sectionTitle'))
+.map(x=>(x.textContent||'').trim().toLowerCase()).join(' ');
+}
 function classify(el){
 if(!el||!el.matches('.infoCard,.emptyState,.eg-empty-state'))return;
 const text=(el.textContent||'').toLowerCase();
+const heading=pageText();
+const combined=heading+' '+text;
 const isEmpty=el.classList.contains('emptyState')||el.classList.contains('eg-empty-state')||!!el.querySelector('svg');
 if(!isEmpty)return;
 el.classList.remove(...rules.map(r=>r[2]));
-let found=null;for(const[,words,cls]of rules){if(words.some(w=>text.includes(w))){found=cls;break;}}
-const cls=found||'eg-3d-package';el.classList.add(cls,'eg-contextual-3d');
-el.querySelectorAll('svg').forEach(x=>x.remove());
+let found=null;
+/* Page heading wins over generic empty-card wording. */
+for(const[,words,cls]of rules){if(words.some(w=>heading.includes(w))){found=cls;break;}}
+if(!found){for(const[,words,cls]of rules){if(words.some(w=>combined.includes(w))){found=cls;break;}}}
+const cls=found||'eg-3d-package';
+el.classList.add(cls,'eg-contextual-3d');
+el.querySelectorAll('svg,.alert-triangle,[data-lucide="alert-triangle"]').forEach(x=>x.remove());
+const old=el.querySelector('.eg3d-scene');
+if(old && !old.classList.contains(cls)){old.remove();}
 if(!el.querySelector('.eg3d-scene')){const scene=document.createElement('div');scene.className='eg3d-scene '+cls;scene.setAttribute('aria-hidden','true');scene.innerHTML=markup(cls);el.insertBefore(scene,el.firstChild);}}
 function scan(){document.querySelectorAll('.infoCard,.emptyState,.eg-empty-state').forEach(classify)}
 const start=()=>{scan();new MutationObserver(scan).observe(document.body,{subtree:true,childList:true,characterData:true})};

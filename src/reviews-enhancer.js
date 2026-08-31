@@ -43,7 +43,7 @@ async function loadReviews(profileId){
   return { reviews, count: reviews.length, average };
 }
 
-async function loadRateableErrands(userId, profileId){
+async function loadRateableErrands(userId, targetProfileId=null){
   if (!supabase || !userId) return [];
   const { data, error } = await supabase
     .from('errands')
@@ -56,19 +56,14 @@ async function loadRateableErrands(userId, profileId){
   const already = new Set((mine || []).map(x=>x.errand_id));
   return (data || []).filter(e => {
     const otherId = e.customer_id === userId ? e.runner_id : e.customer_id;
-    return otherId && otherId !== userId && !already.has(e.id) && otherId === profileId;
-  });
+    return otherId && otherId !== userId && !already.has(e.id) && (!targetProfileId || otherId === targetProfileId);
+  }).map(e => ({...e, reviewee_id:e.customer_id===userId?e.runner_id:e.customer_id, reviewee:e.customer_id===userId?e.runner:e.customer}));
 }
 
 async function submitReview(profileId, errandId, rating, comment){
   const user = await getCurrentUser();
   if (!user) throw new Error('Please sign in to leave a review.');
-  const { error } = await supabase.rpc('submit_review', {
-    p_errand_id: errandId,
-    p_reviewee_id: profileId,
-    p_rating: rating,
-    p_comment: comment || null
-  });
+  const { error } = await supabase.rpc('submit_review', {p_errand_id:errandId,p_reviewee_id:profileId,p_rating:rating,p_comment:comment||null});
   if (error) throw error;
 }
 
@@ -84,91 +79,34 @@ async function renderModal(profileId, profileName){
   const user = await getCurrentUser();
   let summary;
   try { summary = await loadReviews(profileId); } catch(e) { alert(e.message || 'Unable to load reviews.'); return; }
-
-  const backdrop = document.createElement('div');
-  backdrop.id = MODAL_ID;
-  backdrop.className = 'eg-review-backdrop';
-  backdrop.innerHTML = `<div class="eg-review-modal" role="dialog" aria-modal="true" aria-label="Ratings and reviews">
-    <div class="eg-review-head"><h3>Ratings & reviews</h3><button class="eg-review-close" aria-label="Close">×</button></div>
-    <div class="eg-rating-summary"><div><div class="eg-rating-number">${summary.average.toFixed(1)}</div><div class="eg-stars">${stars(summary.average)}</div></div><div><b>${summary.count} ${summary.count===1?'review':'reviews'}</b><div class="eg-muted">Real ratings from completed errands</div></div></div>
-    <div class="eg-review-form" id="eg-review-form"></div>
-    <div id="eg-review-list"></div>
-  </div>`;
+  const backdrop=document.createElement('div');backdrop.id=MODAL_ID;backdrop.className='eg-review-backdrop';
+  backdrop.innerHTML=`<div class="eg-review-modal" role="dialog" aria-modal="true" aria-label="Ratings and reviews"><div class="eg-review-head"><h3>Ratings & reviews</h3><button class="eg-review-close" aria-label="Close">×</button></div><div class="eg-rating-summary"><div><div class="eg-rating-number">${summary.average.toFixed(1)}</div><div class="eg-stars">${stars(summary.average)}</div></div><div><b>${summary.count} ${summary.count===1?'review':'reviews'}</b><div class="eg-muted">Real ratings from completed errands</div></div></div><div class="eg-review-form" id="eg-review-form"></div><div id="eg-review-list"></div></div>`;
   document.body.appendChild(backdrop);
-  backdrop.querySelector('.eg-review-close').onclick = closeModal;
-  backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
-
-  const form = backdrop.querySelector('#eg-review-form');
-  if (!user) {
-    form.innerHTML = `<h4>Want to leave a review?</h4><p class="eg-muted">Sign in and complete an errand with this user first.</p>`;
-  } else if (user.id === profileId) {
-    form.innerHTML = `<h4>Your reviews</h4><p class="eg-muted">You can't rate yourself. Reviews left by other users appear below.</p>`;
-  } else {
-    let rateable = [];
-    try { rateable = await loadRateableErrands(user.id, profileId); } catch(e) { console.warn(e); }
-    if (!rateable.length) {
-      form.innerHTML = `<h4>Leave a review</h4><p class="eg-muted">You can rate ${esc(profileName || 'this user')} after completing an errand together.</p>`;
-    } else {
-      form.innerHTML = `<h4>Rate ${esc(profileName || 'this user')}</h4>
-        <select class="eg-review-select" id="eg-review-errand">${rateable.map(e=>`<option value="${e.id}">${esc(e.title || 'Completed errand')}</option>`).join('')}</select>
-        <div class="eg-star-row" aria-label="Choose rating">${[1,2,3,4,5].map(n=>`<button type="button" class="eg-star-btn" data-rating="${n}">★</button>`).join('')}</div>
-        <textarea id="eg-review-comment" maxlength="1000" placeholder="Share your experience..."></textarea>
-        <button class="eg-review-submit" id="eg-review-submit" disabled>Post review</button>`;
-      let chosen = 0;
-      const starButtons = [...form.querySelectorAll('.eg-star-btn')];
-      const updateStars = () => starButtons.forEach(b=>b.classList.toggle('active', Number(b.dataset.rating) <= chosen));
-      starButtons.forEach(b=>b.onclick=()=>{chosen=Number(b.dataset.rating);updateStars();form.querySelector('#eg-review-submit').disabled=false;});
-      form.querySelector('#eg-review-submit').onclick = async () => {
-        const btn=form.querySelector('#eg-review-submit'); btn.disabled=true; btn.textContent='Posting…';
-        try { await submitReview(profileId, form.querySelector('#eg-review-errand').value, chosen, form.querySelector('#eg-review-comment').value.trim()); await renderModal(profileId, profileName); }
-        catch(e){ alert(e.message || 'Could not post review.'); btn.disabled=false; btn.textContent='Post review'; }
-      };
-    }
+  backdrop.querySelector('.eg-review-close').onclick=closeModal;backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeModal()});
+  const form=backdrop.querySelector('#eg-review-form');
+  let rateable=[];
+  if(user){try{rateable=await loadRateableErrands(user.id,user.id===profileId?null:profileId)}catch(e){console.warn(e)}}
+  if(!user)form.innerHTML=`<h4>Want to leave a review?</h4><p class="eg-muted">Sign in and complete an errand with this user first.</p>`;
+  else if(!rateable.length)form.innerHTML=user.id===profileId?`<h4>Leave a review</h4><p class="eg-muted">There are no completed, unreviewed errands available to rate yet.</p>`:`<h4>Leave a review</h4><p class="eg-muted">You can rate ${esc(profileName||'this user')} after completing an errand together.</p>`;
+  else {
+    form.innerHTML=`<h4>Rate a completed errand</h4><select class="eg-review-select" id="eg-review-errand">${rateable.map(e=>`<option value="${e.id}" data-reviewee="${e.reviewee_id}">${esc(e.title||'Completed errand')} — ${esc(e.reviewee?.full_name||e.reviewee?.email||'User')}</option>`).join('')}</select><div class="eg-star-row" aria-label="Choose rating">${[1,2,3,4,5].map(n=>`<button type="button" class="eg-star-btn" data-rating="${n}">★</button>`).join('')}</div><textarea id="eg-review-comment" maxlength="1000" placeholder="Share your experience..."></textarea><button class="eg-review-submit" id="eg-review-submit" disabled>Post review</button>`;
+    let chosen=0;const buttons=[...form.querySelectorAll('.eg-star-btn')];const paint=()=>buttons.forEach(b=>b.classList.toggle('active',Number(b.dataset.rating)<=chosen));buttons.forEach(b=>b.onclick=()=>{chosen=Number(b.dataset.rating);paint();form.querySelector('#eg-review-submit').disabled=false});
+    form.querySelector('#eg-review-submit').onclick=async()=>{const btn=form.querySelector('#eg-review-submit'),select=form.querySelector('#eg-review-errand'),option=select.options[select.selectedIndex],reviewee=option.dataset.reviewee;btn.disabled=true;btn.textContent='Posting…';try{await submitReview(reviewee,select.value,chosen,form.querySelector('#eg-review-comment').value.trim());await renderModal(profileId,profileName)}catch(e){alert(e.message||'Could not post review.');btn.disabled=false;btn.textContent='Post review'}};
   }
-
-  const list = backdrop.querySelector('#eg-review-list');
-  if (!summary.reviews.length) {
-    list.innerHTML = `<div class="eg-empty-reviews">No reviews yet. Be the first real reviewer after a completed errand.</div>`;
-    return;
-  }
-  list.innerHTML = summary.reviews.map(r=>{
-    const reviewerName = r.reviewer?.full_name || r.reviewer?.email || 'ErrandGo user';
-    const reply = Array.isArray(r.reply) ? r.reply[0] : r.reply;
-    return `<article class="eg-review-item" data-review-id="${r.id}">
-      <div class="eg-review-meta"><div class="eg-review-avatar">${esc(initials(reviewerName))}</div><div><div class="eg-review-name">${esc(reviewerName)}</div><div class="eg-stars" style="font-size:14px;letter-spacing:1px">${stars(r.rating)}</div><div class="eg-review-date">${new Date(r.created_at).toLocaleDateString()}</div></div></div>
-      ${r.comment ? `<p class="eg-review-comment">${esc(r.comment)}</p>` : ''}
-      ${reply ? `<div class="eg-reply"><b>Reply from ${esc(profileName || 'profile owner')}</b><p>${esc(reply.reply)}</p></div>` : ''}
-      ${user && user.id === profileId ? `<div class="eg-reply-form"><input maxlength="1000" placeholder="Reply to this review…"/><button class="eg-reply-btn">Reply</button></div>` : ''}
-    </article>`;
-  }).join('');
-
-  list.querySelectorAll('.eg-reply-btn').forEach(btn=>btn.onclick=async()=>{
-    const article=btn.closest('.eg-review-item'); const input=article.querySelector('input'); const text=input.value.trim(); if(!text)return;
-    btn.disabled=true; btn.textContent='…';
-    try { await submitReply(article.dataset.reviewId,text); await renderModal(profileId,profileName); }
-    catch(e){ alert(e.message || 'Could not reply.'); btn.disabled=false; btn.textContent='Reply'; }
-  });
+  const list=backdrop.querySelector('#eg-review-list');
+  if(!summary.reviews.length){list.innerHTML=`<div class="eg-empty-reviews">No reviews yet. Be the first real reviewer after a completed errand.</div>`;return;}
+  list.innerHTML=summary.reviews.map(r=>{const reviewerName=r.reviewer?.full_name||r.reviewer?.email||'ErrandGo user';const reply=Array.isArray(r.reply)?r.reply[0]:r.reply;return `<article class="eg-review-item" data-review-id="${r.id}"><div class="eg-review-meta"><div class="eg-review-avatar">${esc(initials(reviewerName))}</div><div><div class="eg-review-name">${esc(reviewerName)}</div><div class="eg-stars" style="font-size:14px;letter-spacing:1px">${stars(r.rating)}</div><div class="eg-review-date">${new Date(r.created_at).toLocaleDateString()}</div></div></div>${r.comment?`<p class="eg-review-comment">${esc(r.comment)}</p>`:''}${reply?`<div class="eg-reply"><b>Reply from ${esc(profileName||'profile owner')}</b><p>${esc(reply.reply)}</p></div>`:''}${user&&user.id===profileId?`<div class="eg-reply-form"><input maxlength="1000" placeholder="Reply to this review…"/><button class="eg-reply-btn">Reply</button></div>`:''}</article>`}).join('');
+  list.querySelectorAll('.eg-reply-btn').forEach(btn=>btn.onclick=async()=>{const article=btn.closest('.eg-review-item'),input=article.querySelector('input'),text=input.value.trim();if(!text)return;btn.disabled=true;btn.textContent='…';try{await submitReply(article.dataset.reviewId,text);await renderModal(profileId,profileName)}catch(e){alert(e.message||'Could not reply.');btn.disabled=false;btn.textContent='Reply'}});
 }
 
 function attach(){
   injectStyles();
-  const statCards = document.querySelectorAll('.stats > div');
-  if (!statCards.length) return;
-  const ratingCard = statCards[1];
-  if (!ratingCard || ratingCard.dataset.egReviewsBound === '1') return;
-  ratingCard.dataset.egReviewsBound='1';
-  ratingCard.classList.add('eg-rating-clickable');
-  ratingCard.setAttribute('role','button');
-  ratingCard.setAttribute('tabindex','0');
-  const open = async () => {
-    const user = await getCurrentUser();
-    if (!user) return;
-    let profile = null;
-    if (supabase) { const { data } = await supabase.from('profiles').select('id,full_name,email').eq('id',user.id).maybeSingle(); profile=data; }
-    await renderModal(user.id, profile?.full_name || user.email || 'ErrandGo user');
-  };
-  ratingCard.addEventListener('click', open);
-  ratingCard.addEventListener('keydown', e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+  const statCards=document.querySelectorAll('.stats > div');
+  if(!statCards.length)return;
+  const ratingCard=statCards[1];if(!ratingCard||ratingCard.dataset.egReviewsBound==='1')return;
+  ratingCard.dataset.egReviewsBound='1';ratingCard.classList.add('eg-rating-clickable');ratingCard.setAttribute('role','button');ratingCard.setAttribute('tabindex','0');ratingCard.title='View ratings and reviews';
+  const open=async()=>{const user=await getCurrentUser();if(!user)return;let profile=null;if(supabase){const{data}=await supabase.from('profiles').select('id,full_name,email').eq('id',user.id).maybeSingle();profile=data}await renderModal(user.id,profile?.full_name||user.email||'ErrandGo user')};
+  ratingCard.addEventListener('click',open);ratingCard.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
 }
 
 attach();

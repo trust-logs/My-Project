@@ -39,3 +39,26 @@ const start=()=>{scan();new MutationObserver(scan).observe(document.body,{subtre
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,250));else setTimeout(load,250);
 })();
+
+/* Accepted-errand flow: when the existing React acceptance toast appears, open Messages automatically. */
+(function(){
+  const openedFor=new Set();
+  const openChat=()=>{
+    const candidates=[...document.querySelectorAll('button')];
+    const chat=candidates.find(b=>/^(chat|messages)$/i.test((b.textContent||'').trim())) ||
+      candidates.find(b=>/messages/i.test((b.textContent||'').trim()) && !/mark all/i.test((b.textContent||'')));
+    if(chat){chat.click();return true}
+    return false;
+  };
+  const watch=()=>{
+    const toast=document.querySelector('.toast');
+    const text=(toast?.textContent||'').trim();
+    if(!/runner accepted/i.test(text))return;
+    const key=text+'|'+Math.floor(Date.now()/5000);
+    if(openedFor.has(key))return;
+    openedFor.add(key);
+    setTimeout(()=>openChat(),120);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>new MutationObserver(watch).observe(document.body,{subtree:true,childList:true,characterData:true}));
+  else new MutationObserver(watch).observe(document.body,{subtree:true,childList:true,characterData:true});
+})();

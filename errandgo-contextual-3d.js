@@ -29,12 +29,13 @@ function scan(){document.querySelectorAll('.infoCard,.emptyState,.eg-empty-state
 const start=()=>{scan();new MutationObserver(scan).observe(document.body,{subtree:true,childList:true,characterData:true})};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
 
-/* Load the production ratings/reviews widget after the React app is present. */
+/* Production ratings/reviews widget. */
 (function(){
   function load(){
     if(document.getElementById('eg-reviews-widget-script'))return;
-    const css=document.createElement('link');css.rel='stylesheet';css.href='./reviews-polish.css?v=1';document.head.appendChild(css);
-    const s=document.createElement('script');s.id='eg-reviews-widget-script';s.src='./reviews-widget.js?v=1';s.defer=true;document.body.appendChild(s);
+    const css=document.createElement('link');css.rel='stylesheet';css.href='./reviews-polish.css?v=2';document.head.appendChild(css);
+    const s=document.createElement('script');s.id='eg-reviews-widget-script';s.src='./reviews-widget.js?v=2';s.defer=true;document.body.appendChild(s);
+    const enhancer=document.createElement('script');enhancer.id='eg-reviews-enhancer-script';enhancer.type='module';enhancer.src='./src/reviews-enhancer.js?v=1';document.body.appendChild(enhancer);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(load,250));else setTimeout(load,250);
 })();

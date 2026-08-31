@@ -17,7 +17,6 @@ declare
   v_pickup text;
   v_delivery text;
   v_customer_name text;
-  v_runner_name text;
 begin
   -- Only act when an application actually becomes accepted and a runner exists.
   if new.status <> 'accepted' or new.runner_id is null then
@@ -25,7 +24,7 @@ begin
   end if;
 
   select e.title, e.budget, e.currency, e.pickup_address, e.delivery_address,
-         e.customer_id, p.full_name
+         p.full_name
     into v_title, v_budget, v_currency, v_pickup, v_delivery, v_customer_name
   from public.errands e
   left join public.profiles p on p.id = e.customer_id

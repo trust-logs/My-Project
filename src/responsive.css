@@ -1,0 +1,54 @@
+/* ErrandGo responsive layout: fluid on every viewport, preserves the app's phone-like look on larger screens. */
+html,body,#root{width:100%;min-width:0;max-width:100%;overflow-x:hidden}
+.stage{width:100%;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;padding:clamp(0px,2.2vw,22px);box-sizing:border-box}
+.appShell{width:min(100%,430px);max-width:430px;min-width:0;min-height:calc(100vh - clamp(0px,4.4vw,44px));min-height:calc(100dvh - clamp(0px,4.4vw,44px));margin:0 auto}
+.content{width:100%;min-width:0;overflow-x:hidden}
+.topbar,.bottomNav{max-width:100%}
+.heroCard,.quickGrid,.taskCard,.detail,.walletCard,.infoCard,.profileMenu,.conversationList,.chatPanel{min-width:0;max-width:100%}
+.taskMain,.heroCopy,.profileHead,.conversationList>button>div:nth-child(2){min-width:0}
+.taskCard h4,.taskCard p,.conversationList b,.conversationList small{overflow-wrap:anywhere}
+img,svg,video,canvas{max-width:100%}
+input,textarea,select,button{max-width:100%}
+.two{min-width:0}
+@media (min-width:521px){
+  .appShell{border-radius:34px}
+}
+@media (max-width:520px){
+  .stage{padding:0}
+  .appShell{width:100%;max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}
+  .topbar{height:64px;padding:12px 14px}
+  .content{padding-left:clamp(12px,4.2vw,20px);padding-right:clamp(12px,4.2vw,20px);padding-bottom:96px}
+  .heroCard{border-radius:22px}
+  .heroCopy{width:min(64%,255px)}
+  .heroIllustration{right:-18px;transform:scale(.9);transform-origin:bottom right}
+  .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .quickGrid button{padding:10px 6px}
+  .bottomNav{height:72px}
+  .postModal{width:min(100% - 24px,430px);max-width:calc(100vw - 24px)}
+  .drawer{left:10px;right:10px;max-width:calc(100% - 20px)}
+  .chatBox{max-height:calc(100dvh - 250px)}
+  .chatBox .bubble{max-width:86%;overflow-wrap:anywhere}
+}
+@media (max-width:360px){
+  .topbar .brand{font-size:17px}
+  .brandMark{width:28px;height:28px}
+  .circleBtn{width:36px;height:36px}
+  .welcome h1{font-size:22px}
+  .heroCard{padding:18px 16px}
+  .heroCard h2{font-size:20px}
+  .heroCopy{width:68%}
+  .heroIllustration{opacity:.82;transform:scale(.78)}
+  .heroActions{gap:5px}
+  .limeBtn,.whiteBtn{padding-left:9px;padding-right:9px}
+  .two{grid-template-columns:1fr!important}
+  .detailPrice{grid-template-columns:1fr auto}
+  .application{align-items:flex-start;flex-wrap:wrap}
+  .application .limeBtn{margin-left:auto}
+}
+@media (min-width:900px){
+  .stage{padding:24px}
+  .appShell{min-height:calc(100vh - 48px);min-height:calc(100dvh - 48px)}
+}
+@media (min-width:1400px){
+  .stage{padding:30px}
+}

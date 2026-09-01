@@ -1,19 +1,166 @@
 /* ErrandGo responsive system — fluid on phones, tablets and desktop. */
 html,body,#root{width:100%;min-width:0;max-width:100%;overflow-x:hidden}
+body{min-width:320px}
 .stage{width:100%;min-height:100vh;min-height:100dvh;display:flex;justify-content:center;box-sizing:border-box;padding:clamp(0px,2vw,24px)}
 .appShell{width:100%;max-width:1440px;min-width:0;min-height:calc(100dvh - clamp(0px,4vw,48px));margin:0 auto;overflow:hidden}
-.content{width:100%;min-width:0;overflow-x:hidden;padding-left:clamp(14px,3vw,40px);padding-right:clamp(14px,3vw,40px)}
-.topbar,.bottomNav{max-width:100%}.heroCard,.quickGrid,.taskCard,.detail,.walletCard,.infoCard,.profileMenu,.conversationList,.chatPanel,.taskList,.searchBar,.earnBanner,.detailArt,.detailPrice{min-width:0;max-width:100%}
-.taskMain,.heroCopy,.profileHead,.conversationList>button>div:nth-child(2){min-width:0}.taskCard h4,.taskCard p,.conversationList b,.conversationList small{overflow-wrap:anywhere}
-img,svg,video,canvas{max-width:100%}input,textarea,select,button{max-width:100%;min-width:0}.two{min-width:0}
-@media (max-width:900px){
- .stage{padding:0}.appShell{max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}.topbar{height:64px;padding:12px 14px}
- .content{padding-left:clamp(12px,4.2vw,20px);padding-right:clamp(12px,4.2vw,20px);padding-bottom:96px}.heroCard{border-radius:22px}.heroCopy{width:min(64%,255px)}
- .heroIllustration{right:-18px;transform:scale(.9);transform-origin:bottom right}.quickGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.quickGrid button{padding:10px 6px}.bottomNav{height:72px}
- .drawer{left:10px;right:10px;max-width:calc(100% - 20px)}.chatBox{max-height:calc(100dvh - 250px)}.chatBox .bubble{max-width:86%;overflow-wrap:anywhere}
+.content{width:100%;min-width:0;overflow-x:hidden;padding-left:clamp(14px,3vw,40px);padding-right:clamp(14px,3vw,40px);padding-bottom:96px}
+.topbar,.bottomNav{max-width:100%}
+.heroCard,.quickGrid,.taskCard,.detail,.walletCard,.infoCard,.profileMenu,.conversationList,.chatPanel,.taskList,.searchBar,.earnBanner,.detailArt,.detailPrice,.profileCard,.settingsCard,.supportCard{min-width:0;max-width:100%}
+.taskMain,.heroCopy,.profileHead,.conversationList>button>div:nth-child(2),.chatMain,.chatHeader,.chatComposer{min-width:0}
+.taskCard h4,.taskCard p,.conversationList b,.conversationList small,.chatHeader b,.chatHeader small,.bubble,.infoCard p{overflow-wrap:anywhere;word-break:break-word}
+img,svg,video,canvas{max-width:100%;height:auto}
+input,textarea,select,button{font:inherit;max-width:100%;min-width:0}
+input,textarea,select{box-sizing:border-box}
+textarea{resize:vertical}
+.two{min-width:0}
+
+/* Prevent fixed-width child components from creating horizontal scrolling. */
+.content>*{max-width:100%}
+.content table{display:block;max-width:100%;overflow-x:auto}
+
+/* Forms stay readable and stack cleanly when space gets tight. */
+.formGrid,.profileGrid,.settingsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.formGrid>*,.profileGrid>* ,.settingsGrid>*{min-width:0}
+.field{min-width:0}
+.field input,.field textarea,.field select{width:100%}
+
+/* Chat: two-pane desktop, one-pane mobile. */
+.chatLayout{display:grid;grid-template-columns:minmax(240px,330px) minmax(0,1fr);gap:12px;min-width:0}
+.chatPanel{min-width:0;overflow:hidden}
+.chatBox{min-width:0;overflow:auto}
+.chatBox .bubble{max-width:min(78%,560px)}
+.chatForm{display:flex;gap:8px;min-width:0}
+.chatForm input{flex:1;width:100%;min-width:0}
+
+@media (max-width:1100px){
+ .stage{padding:0}.appShell{max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}
+ .content{padding-left:clamp(12px,4vw,24px);padding-right:clamp(12px,4vw,24px)}
+ .heroCard{border-radius:22px}
+ .heroCopy{width:min(64%,255px)}
+ .heroIllustration{right:-18px;transform:scale(.9);transform-origin:bottom right}
+ .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .quickGrid button{padding:10px 8px}
+ .bottomNav{height:72px}
+ .drawer{left:10px;right:10px;max-width:calc(100% - 20px)}
+ .chatBox{max-height:calc(100dvh - 250px)}
+ .chatBox .bubble{max-width:86%}
+ .chatLayout{grid-template-columns:minmax(190px,280px) minmax(0,1fr)}
 }
-@media (max-width:520px){.heroCopy{width:min(68%,255px)}.heroCard h2{font-size:22px}.heroActions{flex-wrap:wrap}.limeBtn,.whiteBtn{flex:1 1 auto}}
-@media (max-width:380px){.topbar .brand{font-size:17px}.brandMark{width:28px;height:28px}.circleBtn{width:36px;height:36px}.welcome h1{font-size:22px}.heroCard{padding:18px 16px}.heroCard h2{font-size:20px}.heroCopy{width:70%}.heroIllustration{opacity:.8;transform:scale(.76)}.two{grid-template-columns:1fr!important}.detailPrice{grid-template-columns:1fr auto}.application{align-items:flex-start;flex-wrap:wrap}.application .limeBtn{margin-left:auto}}
+
+@media (max-width:760px){
+ .content{padding-bottom:94px}
+ .welcome{gap:12px}
+ .welcome>div:first-child{min-width:0}
+ .welcome h1{font-size:clamp(21px,6vw,25px);overflow-wrap:anywhere}
+ .welcome p{font-size:11px;line-height:1.4}
+ .heroCard{height:auto;min-height:270px;padding:20px 18px}
+ .heroCopy{width:100%;max-width:62%;position:relative;z-index:4}
+ .heroCard h2{font-size:clamp(21px,6vw,27px)}
+ .heroCard p{max-width:100%;font-size:11px}
+ .heroActions{flex-wrap:wrap}
+ .limeBtn,.whiteBtn{flex:1 1 125px;min-width:0}
+ .heroIllustration{width:155px;height:190px;right:-12px;opacity:.8;transform:scale(.8)}
+ .quickGrid{grid-template-columns:1fr;gap:8px}
+ .quickGrid button{display:grid;grid-template-columns:38px minmax(0,1fr);grid-template-rows:auto auto;column-gap:10px;text-align:left;padding:11px}
+ .quickGrid .qIcon{grid-row:1 / span 2;margin:0;width:38px;height:38px}
+ .quickGrid b{align-self:end;font-size:11px}
+ .quickGrid small{align-self:start;font-size:9px}
+ .categoryRow{max-width:100%;overflow-x:auto}
+ .taskList{grid-template-columns:1fr!important}
+ .taskCard{padding:11px}
+ .taskIcon{width:48px;height:55px}
+ .taskBottom{flex-wrap:wrap}
+ .taskBottom button{margin-left:auto}
+ .detail h2{font-size:clamp(22px,7vw,28px)}
+ .detailArt{height:170px}
+ .walletCard h2{font-size:clamp(27px,8vw,34px)}
+ .formGrid,.profileGrid,.settingsGrid{grid-template-columns:1fr;gap:10px}
+ .two{grid-template-columns:1fr!important}
+ .chatLayout{display:block}
+ .conversationList{max-height:34dvh;overflow:auto}
+ .chatPanel{margin-top:10px}
+ .chatBox{max-height:52dvh;min-height:220px}
+ .chatForm{padding-bottom:max(6px,env(safe-area-inset-bottom))}
+ .chatForm input{font-size:16px} /* prevents iOS zoom */
+ .searchBar{height:46px}
+ .pageTitle{gap:10px}
+ .pageTitle h2{font-size:21px}
+}
+
+@media (max-width:520px){
+ .topbar{height:64px;padding:11px 12px}
+ .topbar .brand{font-size:18px}
+ .brandMark{width:29px;height:29px}
+ .circleBtn{width:38px;height:38px}
+ .content{padding-left:12px;padding-right:12px}
+ .heroCopy{max-width:68%}
+ .heroCard h2{font-size:21px}
+ .heroCard p{font-size:10px}
+ .heroActions{gap:6px;margin-top:14px}
+ .limeBtn,.whiteBtn{font-size:10px;min-height:38px;padding:8px 10px}
+ .heroIllustration{opacity:.65;transform:scale(.68);right:-20px}
+ .sectionTitle{margin-top:18px}
+ .sectionTitle h3{font-size:13px}
+ .categoryRow button{min-width:60px}
+ .taskCard h4{font-size:11px}
+ .taskCard p{font-size:8px}
+ .taskBottom strong{font-size:12px}
+ .bottomNav{height:70px;padding-left:4px;padding-right:4px}
+ .bottomNav button{width:54px}
+ .bottomNav .postFab{width:53px;height:53px}
+ .drawer{top:64px;left:8px;right:8px;max-width:none}
+ .profileCard,.settingsCard,.supportCard,.infoCard{border-radius:15px}
+}
+
+@media (max-width:380px){
+ .topbar .brand{font-size:16px}
+ .brandMark{width:27px;height:27px}
+ .circleBtn{width:35px;height:35px}
+ .welcome h1{font-size:21px}
+ .heroCard{padding:17px 14px;min-height:255px}
+ .heroCopy{max-width:72%}
+ .heroCard h2{font-size:19px}
+ .heroCard p{font-size:9px}
+ .heroIllustration{opacity:.45;transform:scale(.58);right:-28px}
+ .two{grid-template-columns:1fr!important}
+ .detailPrice{grid-template-columns:1fr auto}
+ .application{align-items:flex-start;flex-wrap:wrap}
+ .application .limeBtn{margin-left:auto}
+ .bottomNav button{font-size:7px;width:50px}
+ .bottomNav button svg{width:19px}
+}
+
+@media (min-width:761px){
+ .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
 @media (min-width:901px){
- .stage{align-items:flex-start}.appShell{border-radius:28px;box-shadow:0 28px 80px rgba(46,25,72,.25)}.content{padding-bottom:48px}.topbar{padding-left:28px;padding-right:28px}.heroCard{height:320px}.heroCopy{width:52%;max-width:620px}.heroCard h2{font-size:32px}.heroCard p{font-size:13px;max-width:430px}.heroActions{gap:10px}.quickGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quickGrid button{padding:16px}.taskList{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.bottomNav{max-width:700px;left:50%;right:auto;transform:translateX(-50%);width:calc(100% - 48px);border:1px solid #eee9f2;border-radius:18px 18px 0 0}.drawer{max-width:380px}}
-@media (min-width:1200px){.content{padding-left:clamp(32px,5vw,72px);padding-right:clamp(32px,5vw,72px)}.taskList{grid-template-columns:repeat(3,minmax(0,1fr))}}
+ .stage{align-items:flex-start}
+ .appShell{border-radius:28px;box-shadow:0 28px 80px rgba(46,25,72,.25)}
+ .content{padding-bottom:48px}
+ .topbar{padding-left:28px;padding-right:28px}
+ .heroCard{height:320px}
+ .heroCopy{width:52%;max-width:620px}
+ .heroCard h2{font-size:32px}
+ .heroCard p{font-size:13px;max-width:430px}
+ .heroActions{gap:10px}
+ .quickGrid{gap:12px}
+ .quickGrid button{padding:16px}
+ .taskList{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .bottomNav{max-width:700px;left:50%;right:auto;transform:translateX(-50%);width:calc(100% - 48px);border:1px solid #eee9f2;border-radius:18px 18px 0 0}
+ .drawer{max-width:380px}
+}
+
+@media (min-width:1200px){
+ .content{padding-left:clamp(32px,5vw,72px);padding-right:clamp(32px,5vw,72px)}
+ .taskList{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Accessibility and touch targets */
+@media (pointer:coarse){
+ button,.bottomNav button,.drawer>button{min-height:44px}
+ input,select,textarea{min-height:44px}
+}
+
+/* Safe-area support for modern phones. */
+@supports (padding: max(0px)){.bottomNav{padding-bottom:max(7px,env(safe-area-inset-bottom))}.topbar{padding-top:max(11px,env(safe-area-inset-top))}}

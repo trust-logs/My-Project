@@ -9,14 +9,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='25' fill='%238d4dff'/%3E%3Ctext x='50' y='68' font-size='62' text-anchor='middle' fill='white' font-family='Arial' font-weight='800'%3EE%3C/text%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./src/ui-polish.css" />
-    <link rel="stylesheet" href="./src/responsive.css" />
+    <link rel="stylesheet" href="./src/ui-polish.css?v=2" />
+    <link rel="stylesheet" href="./src/responsive.css?v=5" />
     <link rel="stylesheet" href="./withdraw-polish.css" />
     <link rel="stylesheet" href="./errandgo-states.css" />
     <link rel="stylesheet" href="./errandgo-final-polish.css" />
     <link rel="stylesheet" href="./errandgo-whatsapp-chat.css" />
-    <link rel="stylesheet" href="./errandgo-3d-states.css" />
-    <link rel="stylesheet" href="./errandgo-contextual-3d.css?v=4" />
+    <link rel="stylesheet" href="./errandgo-3d-states.css?v=2" />
+    <link rel="stylesheet" href="./errandgo-contextual-3d.css?v=5" />
     <title>ErrandGo — Get Things Done. Anywhere.</title>
     <style>
       .loading{display:none!important}.chatBox:not(:has(.bubble))+.chatForm{display:none!important}.chatBox:not(:has(.bubble)){min-height:330px;display:flex;align-items:center;justify-content:center}.chatBox:not(:has(.bubble)) .infoCard{width:100%;margin:0;background:#fbf9ff;border-color:#e8e0f5;border-radius:20px;padding:28px 20px;text-align:center}.chatBox:not(:has(.bubble)) .infoCard svg{width:38px;height:38px;color:#8d4dff;margin-bottom:8px}.chatBox:not(:has(.bubble)) .infoCard p{margin:7px 0 0;font-size:11px;line-height:1.5;color:#77717f}
@@ -26,7 +26,7 @@
   <body>
     <div id="root"></div>
     <script>try{const old=JSON.parse(localStorage.getItem('eg_chat')||'[]');if(Array.isArray(old)&&old.some(m=>!m.conversation_id))localStorage.removeItem('eg_chat')}catch(_){localStorage.removeItem('eg_chat')}</script>
-    <script src="./errandgo-contextual-3d.js?v=4"></script>
+    <script src="./errandgo-contextual-3d.js?v=5"></script>
     <script src="./accepted-errand-chat.js?v=1"></script>
     <script type="module" src="./src/main.jsx"></script>
     <script type="module" src="./src/reviews-enhancer.js?v=1"></script>

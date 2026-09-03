@@ -1,0 +1,143 @@
+/* ErrandGo animation restoration + permanent warning-triangle removal.
+   This file intentionally restores motion without changing the established layout. */
+
+/* PERMANENTLY REMOVE the old warning-triangle UI anywhere it is rendered. */
+.alert-triangle,
+[data-lucide="alert-triangle"],
+[data-lucide="triangle-alert"],
+svg.lucide-alert-triangle,
+svg.lucide-triangle-alert,
+.alertTriangle,
+.warningTriangle,
+.warning-triangle,
+.triangle-alert,
+.triangleWarning,
+[data-icon="alert-triangle"],
+[data-icon="triangle-alert"]{
+  display:none!important;
+  visibility:hidden!important;
+  width:0!important;
+  height:0!important;
+  pointer-events:none!important;
+}
+
+/* Hero delivery bike/scooter: restore the lively 3D-feeling motion. */
+.heroIllustration{
+  perspective:900px;
+  transform-style:preserve-3d;
+}
+.heroIllustration .person{
+  transform-style:preserve-3d;
+  transform-origin:50% 80%;
+  will-change:transform;
+  animation:eg-bike-ride 3.6s cubic-bezier(.42,0,.2,1) infinite!important;
+  filter:drop-shadow(0 18px 10px rgba(45,21,87,.28));
+}
+.heroIllustration .person::before,
+.heroIllustration .person::after{
+  content:'✦';
+  position:absolute;
+  color:#fff;
+  font-size:18px;
+  line-height:1;
+  opacity:0;
+  pointer-events:none;
+  animation:eg-sparkle 2.4s ease-in-out infinite;
+}
+.heroIllustration .person::before{left:-18px;top:8px;animation-delay:.25s}
+.heroIllustration .person::after{right:-14px;top:34px;font-size:13px;animation-delay:1.05s}
+
+@keyframes eg-bike-ride{
+  0%,100%{transform:translate3d(0,0,0) rotateX(0deg) rotateY(-4deg) rotateZ(-2deg) scale(1)}
+  18%{transform:translate3d(-5px,-5px,10px) rotateX(3deg) rotateY(4deg) rotateZ(1deg) scale(1.015)}
+  42%{transform:translate3d(7px,-13px,22px) rotateX(-4deg) rotateY(-8deg) rotateZ(3deg) scale(1.045)}
+  65%{transform:translate3d(12px,-6px,12px) rotateX(4deg) rotateY(8deg) rotateZ(-1deg) scale(1.025)}
+  82%{transform:translate3d(-3px,-2px,4px) rotateX(-2deg) rotateY(-4deg) rotateZ(-3deg) scale(1.008)}
+}
+
+/* Keep the hero glow alive rather than static. */
+.heroGlow{
+  animation:eg-glow-pulse 4.2s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes eg-glow-pulse{
+  0%,100%{transform:scale(1);opacity:.78}
+  50%{transform:scale(1.16);opacity:.96}
+}
+
+/* Floating verification/global badges retain their existing motion and get depth. */
+.heroIllustration .floating{
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.heroIllustration .f1{animation:eg-badge-float 2.8s ease-in-out infinite!important}
+.heroIllustration .f2{animation:eg-badge-float 3.2s ease-in-out .45s infinite!important}
+@keyframes eg-badge-float{
+  0%,100%{transform:translate3d(0,0,0) rotateZ(0deg)}
+  50%{transform:translate3d(0,-8px,12px) rotateZ(2deg)}
+}
+
+/* Restore the decorative star/sparkle animation around the hero. */
+.heroCard::before,
+.heroCard::after{
+  content:'✦';
+  position:absolute;
+  z-index:3;
+  color:#fff;
+  font-weight:900;
+  pointer-events:none;
+  text-shadow:0 0 14px rgba(255,255,255,.65);
+  animation:eg-hero-star 2.8s ease-in-out infinite;
+}
+.heroCard::before{right:26%;top:28%;font-size:15px;animation-delay:.2s}
+.heroCard::after{right:19%;bottom:24%;font-size:9px;animation-delay:1.15s}
+@keyframes eg-hero-star{
+  0%,100%{opacity:.15;transform:translate3d(0,5px,0) rotate(0deg) scale(.72)}
+  45%{opacity:1;transform:translate3d(3px,-5px,20px) rotate(90deg) scale(1.15)}
+  70%{opacity:.55;transform:translate3d(-2px,-1px,8px) rotate(160deg) scale(.9)}
+}
+
+/* Give the main interactive cards subtle life without changing their layout. */
+.quickGrid button,
+.categoryRow button,
+.taskCard{
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+.quickGrid button:hover,
+.categoryRow button:hover,
+.taskCard:hover{
+  transform:translateY(-3px);
+}
+
+/* Empty-state 3D/star animation is always available; never show a warning icon. */
+.eg-contextual-3d .eg3d-scene,
+.eg-state-icon,
+.emptyState::before,
+.taskList>.infoCard::before{
+  animation:eg-empty-float 4.5s ease-in-out infinite;
+  transform-style:preserve-3d;
+}
+@keyframes eg-empty-float{
+  0%,100%{transform:translateY(0) rotateX(0deg) rotateY(-7deg)}
+  50%{transform:translateY(-9px) rotateX(7deg) rotateY(10deg) rotateZ(1deg)}
+}
+
+/* Global defensive cleanup for warning triangles injected later by React/Lucide. */
+body svg[data-lucide="alert-triangle"],
+body svg[data-lucide="triangle-alert"],
+body .alert-triangle,
+body .warning-triangle{display:none!important}
+
+@media(prefers-reduced-motion:reduce){
+  .heroIllustration .person,
+  .heroGlow,
+  .heroIllustration .floating,
+  .heroCard::before,
+  .heroCard::after,
+  .heroIllustration .person::before,
+  .heroIllustration .person::after,
+  .eg-contextual-3d .eg3d-scene,
+  .eg-state-icon,
+  .emptyState::before,
+  .taskList>.infoCard::before{animation:none!important}
+}

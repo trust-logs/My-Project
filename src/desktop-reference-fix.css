@@ -1,0 +1,54 @@
+/* ErrandGo reference desktop layout
+   Responsive correction only. The original visual design stays unchanged. */
+@media (min-width:1101px){
+  .stage{
+    width:100%;
+    min-height:100vh;
+    padding:22px 2.7vw;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+  }
+  .appShell{
+    width:min(100%,1580px);
+    max-width:1580px;
+    min-height:calc(100vh - 44px);
+    margin:0 auto;
+    border-radius:34px;
+    overflow:hidden;
+    box-shadow:0 28px 80px rgba(46,25,72,.30);
+  }
+  .content{
+    width:min(1165px,calc(100% - 40px));
+    max-width:1165px;
+    margin:0 auto;
+    padding-left:0;
+    padding-right:0;
+    padding-bottom:92px;
+  }
+  .topbar{
+    width:100%;
+    padding-left:28px;
+    padding-right:28px;
+  }
+  .heroCard{height:314px}
+  .heroCopy{width:52%;max-width:620px}
+  .heroCard h2{font-size:32px}
+  .heroCard p{font-size:13px;max-width:430px}
+  .quickGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+  .quickGrid button{padding:15px 10px}
+  .taskList{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .taskCard{min-width:0}
+  .categoryRow{overflow-x:visible}
+}
+
+/* Very wide displays: keep the same reference composition rather than stretching it. */
+@media (min-width:1600px){
+  .content{width:1165px}
+}
+
+/* Never let desktop content become wider than its reference canvas. */
+@media (min-width:1101px){
+  .content > *{max-width:100%}
+  .heroCard,.quickGrid,.categoryRow,.taskList,.sectionTitle{width:100%}
+}

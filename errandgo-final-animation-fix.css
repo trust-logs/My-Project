@@ -1,0 +1,140 @@
+/* ErrandGo final visual restoration layer. Loaded last so older overrides cannot disable it. */
+
+/* Never render the old warning/alert triangle anywhere. */
+svg.lucide-alert-triangle,
+svg.lucide-triangle-alert,
+svg[data-lucide="alert-triangle"],
+svg[data-lucide="triangle-alert"],
+[data-icon="alert-triangle"],
+[data-icon="triangle-alert"],
+.alert-triangle,
+.alertTriangle,
+.warning-triangle,
+.warningTriangle,
+.triangle-alert,
+.triangleWarning { display:none !important; visibility:hidden !important; opacity:0 !important; width:0 !important; height:0 !important; }
+
+/* The empty state used to render AlertTriangle. Keep the state, remove the warning visual. */
+.infoCard > svg.lucide-triangle-alert,
+.infoCard > svg.lucide-alert-triangle { display:none !important; }
+
+/* Restore the hero delivery bike as a real CSS-built animated object instead of a static emoji. */
+.heroIllustration .person {
+  position:absolute !important;
+  right:4px !important;
+  bottom:34px !important;
+  width:164px !important;
+  height:116px !important;
+  display:block !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  color:transparent !important;
+  background:
+    radial-gradient(circle at 25% 79%, #242132 0 11px, #eee9f7 12px 16px, transparent 17px),
+    radial-gradient(circle at 78% 79%, #242132 0 11px, #eee9f7 12px 16px, transparent 17px);
+  filter:drop-shadow(0 17px 9px rgba(45,21,87,.30));
+  transform-origin:55% 80%;
+  animation:eg-final-bike 3.5s cubic-bezier(.45,0,.2,1) infinite !important;
+  z-index:4;
+}
+
+/* Scooter body, deck and front fairing. */
+.heroIllustration .person::before {
+  content:"";
+  position:absolute;
+  left:39px;
+  top:58px;
+  width:82px;
+  height:23px;
+  border-radius:18px 22px 9px 12px;
+  background:linear-gradient(135deg,#ffffff 0 25%,#ddd8f3 26% 52%,#9c61e9 53% 100%);
+  box-shadow:34px -17px 0 -5px #ffffff, 49px -28px 0 -7px #91ee20;
+  transform:skewX(-8deg) rotate(-3deg);
+}
+
+/* Rider/head and handlebar give the hero object a 3D illustrated feel. */
+.heroIllustration .person::after {
+  content:"";
+  position:absolute;
+  left:69px;
+  top:19px;
+  width:31px;
+  height:55px;
+  border-radius:18px 18px 11px 11px;
+  background:linear-gradient(145deg,#242132 0 24%,#8d4dff 25% 64%,#91ee20 65% 100%);
+  box-shadow:18px 5px 0 -11px #242132, 15px -10px 0 -6px #f1c7a5;
+  transform:rotate(14deg);
+}
+
+@keyframes eg-final-bike {
+  0%,100% { transform:translate3d(0,0,0) rotateZ(-2deg) rotateY(-5deg) scale(1); }
+  20% { transform:translate3d(-5px,-5px,8px) rotateZ(1deg) rotateY(5deg) scale(1.02); }
+  45% { transform:translate3d(8px,-13px,22px) rotateZ(3deg) rotateY(-7deg) scale(1.06); }
+  65% { transform:translate3d(13px,-6px,12px) rotateZ(-1deg) rotateY(8deg) scale(1.035); }
+  82% { transform:translate3d(-3px,-2px,4px) rotateZ(-3deg) rotateY(-4deg) scale(1.01); }
+}
+
+/* Persistent sparkle particles around the moving bike. */
+.heroIllustration::before,
+.heroIllustration::after {
+  content:"✦";
+  position:absolute;
+  z-index:6;
+  color:#fff;
+  font-size:17px;
+  font-weight:900;
+  pointer-events:none;
+  text-shadow:0 0 14px rgba(255,255,255,.9);
+  animation:eg-final-sparkle 2.2s ease-in-out infinite;
+}
+.heroIllustration::before { left:12px; top:67px; }
+.heroIllustration::after { right:3px; top:18px; font-size:11px; animation-delay:.9s; }
+
+@keyframes eg-final-sparkle {
+  0%,100% { opacity:.15; transform:translate3d(0,5px,0) rotate(0deg) scale(.65); }
+  45% { opacity:1; transform:translate3d(4px,-7px,18px) rotate(90deg) scale(1.25); }
+  75% { opacity:.45; transform:translate3d(-3px,-2px,7px) rotate(180deg) scale(.85); }
+}
+
+/* Animated green glow behind the bike. */
+.heroIllustration .b1 { animation:eg-final-orb 4s ease-in-out infinite !important; transform-origin:center; }
+.heroIllustration .b2 { animation:eg-final-orb 4.8s ease-in-out .4s infinite !important; transform-origin:center; }
+@keyframes eg-final-orb {
+  0%,100% { transform:scale(1); opacity:.62; }
+  50% { transform:scale(1.12); opacity:.86; }
+}
+
+/* Make the hero stars visibly alive even when older animation CSS is overridden. */
+.heroCard::before,
+.heroCard::after {
+  animation:eg-final-hero-star 2.5s ease-in-out infinite !important;
+}
+@keyframes eg-final-hero-star {
+  0%,100% { opacity:.15; transform:translate3d(0,5px,0) rotate(0) scale(.7); }
+  45% { opacity:1; transform:translate3d(3px,-6px,18px) rotate(90deg) scale(1.2); }
+  72% { opacity:.5; transform:translate3d(-2px,-1px,8px) rotate(170deg) scale(.9); }
+}
+
+/* Keep page transitions and interactive cards lively. */
+.content { animation:eg-final-page-in .42s ease both; }
+@keyframes eg-final-page-in {
+  from { opacity:0; transform:translateY(8px); }
+  to { opacity:1; transform:none; }
+}
+.quickGrid button,.categoryRow button,.taskCard,.circleBtn,.limeBtn,.whiteBtn {
+  will-change:transform;
+}
+.quickGrid button:hover,.categoryRow button:hover,.taskCard:hover { transform:translateY(-3px) scale(1.005); }
+
+/* Prevent the defensive warning cleanup from leaving a clickable gap. */
+body [data-lucide="alert-triangle"],
+body [data-lucide="triangle-alert"] { pointer-events:none !important; }
+
+@media (max-width:700px) {
+  .heroIllustration .person { right:-5px !important; bottom:31px !important; transform-origin:55% 80%; }
+  .heroIllustration::before { left:4px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .heroIllustration .person,.heroIllustration .b1,.heroIllustration .b2,.heroIllustration::before,.heroIllustration::after,.heroCard::before,.heroCard::after { animation:none !important; }
+}

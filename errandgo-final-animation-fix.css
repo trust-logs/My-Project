@@ -1,6 +1,6 @@
 /* ErrandGo final visual restoration layer. Loaded last so older overrides cannot disable it. */
 
-/* Never render the old warning/alert triangle anywhere. */
+/* Permanently remove the old warning/alert triangle. */
 svg.lucide-alert-triangle,
 svg.lucide-triangle-alert,
 svg[data-lucide="alert-triangle"],
@@ -14,67 +14,84 @@ svg[data-lucide="triangle-alert"],
 .triangle-alert,
 .triangleWarning { display:none !important; visibility:hidden !important; opacity:0 !important; width:0 !important; height:0 !important; }
 
-/* The empty state used to render AlertTriangle. Keep the state, remove the warning visual. */
 .infoCard > svg.lucide-triangle-alert,
 .infoCard > svg.lucide-alert-triangle { display:none !important; }
 
-/* Restore the hero delivery bike as a real CSS-built animated object instead of a static emoji. */
+/* Animated little delivery scooter. The existing .person mount is kept so no JSX change is required. */
 .heroIllustration .person {
   position:absolute !important;
-  right:4px !important;
-  bottom:34px !important;
-  width:164px !important;
-  height:116px !important;
+  right:0 !important;
+  bottom:25px !important;
+  width:205px !important;
+  height:145px !important;
   display:block !important;
   font-size:0 !important;
   line-height:0 !important;
   color:transparent !important;
   background:
-    radial-gradient(circle at 25% 79%, #242132 0 11px, #eee9f7 12px 16px, transparent 17px),
-    radial-gradient(circle at 78% 79%, #242132 0 11px, #eee9f7 12px 16px, transparent 17px);
-  filter:drop-shadow(0 17px 9px rgba(45,21,87,.30));
-  transform-origin:55% 80%;
-  animation:eg-final-bike 3.5s cubic-bezier(.45,0,.2,1) infinite !important;
+    radial-gradient(circle at 23% 82%, #242132 0 13px, #d9d7e5 14px 19px, #242132 20px 24px, transparent 25px),
+    radial-gradient(circle at 82% 82%, #242132 0 13px, #d9d7e5 14px 19px, #242132 20px 24px, transparent 25px);
+  filter:drop-shadow(0 18px 10px rgba(45,21,87,.32));
+  transform-origin:55% 82%;
+  animation:eg-final-scooter 3.4s cubic-bezier(.45,0,.2,1) infinite !important;
   z-index:4;
 }
 
-/* Scooter body, deck and front fairing. */
+/* Main scooter body / footboard. */
 .heroIllustration .person::before {
   content:"";
   position:absolute;
   left:39px;
-  top:58px;
-  width:82px;
-  height:23px;
-  border-radius:18px 22px 9px 12px;
-  background:linear-gradient(135deg,#ffffff 0 25%,#ddd8f3 26% 52%,#9c61e9 53% 100%);
-  box-shadow:34px -17px 0 -5px #ffffff, 49px -28px 0 -7px #91ee20;
-  transform:skewX(-8deg) rotate(-3deg);
+  top:70px;
+  width:123px;
+  height:27px;
+  border-radius:18px 35px 12px 15px;
+  background:linear-gradient(145deg,#c8ff4d 0%,#9be82b 34%,#7c52db 35%,#7650d5 100%);
+  box-shadow:
+    30px -15px 0 -5px #a7eb32,
+    48px -24px 0 -9px #242132,
+    16px 7px 0 -5px #5a3ab1;
+  transform:skewX(-8deg) rotate(-2deg);
 }
 
-/* Rider/head and handlebar give the hero object a 3D illustrated feel. */
+/* Scooter front fairing, handlebar, headlight and rider. */
 .heroIllustration .person::after {
   content:"";
   position:absolute;
-  left:69px;
-  top:19px;
-  width:31px;
-  height:55px;
-  border-radius:18px 18px 11px 11px;
-  background:linear-gradient(145deg,#242132 0 24%,#8d4dff 25% 64%,#91ee20 65% 100%);
-  box-shadow:18px 5px 0 -11px #242132, 15px -10px 0 -6px #f1c7a5;
-  transform:rotate(14deg);
+  left:102px;
+  top:23px;
+  width:48px;
+  height:78px;
+  border-radius:25px 25px 18px 18px;
+  background:linear-gradient(150deg,#c8ff4d 0%,#9be82b 42%,#7650d5 43%,#633fc5 100%);
+  border:3px solid rgba(255,255,255,.28);
+  box-shadow:
+    -42px 57px 0 -19px #242132,
+    -45px 55px 0 -22px #f3d5bd,
+    9px -9px 0 -4px #242132,
+    16px 0 0 -7px #fff5a8;
+  transform:rotate(5deg);
 }
 
-@keyframes eg-final-bike {
-  0%,100% { transform:translate3d(0,0,0) rotateZ(-2deg) rotateY(-5deg) scale(1); }
-  20% { transform:translate3d(-5px,-5px,8px) rotateZ(1deg) rotateY(5deg) scale(1.02); }
-  45% { transform:translate3d(8px,-13px,22px) rotateZ(3deg) rotateY(-7deg) scale(1.06); }
-  65% { transform:translate3d(13px,-6px,12px) rotateZ(-1deg) rotateY(8deg) scale(1.035); }
-  82% { transform:translate3d(-3px,-2px,4px) rotateZ(-3deg) rotateY(-4deg) scale(1.01); }
+/* Delivery box sits behind the rider, making the object read as an errand/delivery scooter. */
+.heroIllustration .person {
+  --eg-box: linear-gradient(145deg,#ffffff,#e9e5f8);
+}
+.heroIllustration .person .deliveryBox,
+.heroIllustration .person .box { display:none !important; }
+
+@keyframes eg-final-scooter {
+  0%,100% { transform:translate3d(0,0,0) rotateZ(-2deg) rotateY(-4deg) scale(1); }
+  20% { transform:translate3d(-4px,-4px,5px) rotateZ(1deg) rotateY(4deg) scale(1.015); }
+  45% { transform:translate3d(8px,-11px,16px) rotateZ(2deg) rotateY(-5deg) scale(1.045); }
+  65% { transform:translate3d(11px,-5px,9px) rotateZ(-1deg) rotateY(6deg) scale(1.025); }
+  82% { transform:translate3d(-3px,-2px,3px) rotateZ(-2deg) rotateY(-3deg) scale(1.008); }
 }
 
-/* Persistent sparkle particles around the moving bike. */
+/* Bright scooter headlight. */
+.heroIllustration .person:global(.unused) { box-shadow:none; }
+
+/* Persistent sparkle particles around the moving scooter. */
 .heroIllustration::before,
 .heroIllustration::after {
   content:"✦";
@@ -96,7 +113,7 @@ svg[data-lucide="triangle-alert"],
   75% { opacity:.45; transform:translate3d(-3px,-2px,7px) rotate(180deg) scale(.85); }
 }
 
-/* Animated green glow behind the bike. */
+/* Animated glow/orb layers behind the scooter. */
 .heroIllustration .b1 { animation:eg-final-orb 4s ease-in-out infinite !important; transform-origin:center; }
 .heroIllustration .b2 { animation:eg-final-orb 4.8s ease-in-out .4s infinite !important; transform-origin:center; }
 @keyframes eg-final-orb {
@@ -104,7 +121,6 @@ svg[data-lucide="triangle-alert"],
   50% { transform:scale(1.12); opacity:.86; }
 }
 
-/* Make the hero stars visibly alive even when older animation CSS is overridden. */
 .heroCard::before,
 .heroCard::after {
   animation:eg-final-hero-star 2.5s ease-in-out infinite !important;
@@ -115,23 +131,19 @@ svg[data-lucide="triangle-alert"],
   72% { opacity:.5; transform:translate3d(-2px,-1px,8px) rotate(170deg) scale(.9); }
 }
 
-/* Keep page transitions and interactive cards lively. */
 .content { animation:eg-final-page-in .42s ease both; }
 @keyframes eg-final-page-in {
   from { opacity:0; transform:translateY(8px); }
   to { opacity:1; transform:none; }
 }
-.quickGrid button,.categoryRow button,.taskCard,.circleBtn,.limeBtn,.whiteBtn {
-  will-change:transform;
-}
+.quickGrid button,.categoryRow button,.taskCard,.circleBtn,.limeBtn,.whiteBtn { will-change:transform; }
 .quickGrid button:hover,.categoryRow button:hover,.taskCard:hover { transform:translateY(-3px) scale(1.005); }
 
-/* Prevent the defensive warning cleanup from leaving a clickable gap. */
 body [data-lucide="alert-triangle"],
 body [data-lucide="triangle-alert"] { pointer-events:none !important; }
 
 @media (max-width:700px) {
-  .heroIllustration .person { right:-5px !important; bottom:31px !important; transform-origin:55% 80%; }
+  .heroIllustration .person { right:-16px !important; bottom:23px !important; transform-origin:55% 82%; }
   .heroIllustration::before { left:4px; }
 }
 

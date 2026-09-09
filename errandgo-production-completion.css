@@ -1,0 +1,38 @@
+/* ErrandGo production completion layer.
+   Keeps the approved purple/lime design intact while fixing layout edge cases. */
+
+/* Permanently remove the old warning/triangle visual. */
+svg.lucide-alert-triangle,
+svg.lucide-triangle-alert,
+svg[data-lucide="alert-triangle"],
+svg[data-lucide="triangle-alert"],
+.alert-triangle,.alertTriangle,.warning-triangle,.warningTriangle,.triangle-alert,.triangleWarning{display:none!important}
+
+/* Keep the mobile app-shell feeling on desktop and prevent a narrow/left-only bottom bar. */
+.stage{min-height:100dvh;width:100%;display:flex;justify-content:center;align-items:flex-start;box-sizing:border-box}
+.appShell{width:min(1180px,100%);max-width:1180px;min-height:100dvh;box-sizing:border-box;overflow-x:clip}
+.bottomNav{width:100%!important;left:0!important;right:0!important;box-sizing:border-box!important}
+
+/* The hero illustration remains lively even if an older stylesheet wins later in the cascade. */
+.heroIllustration .person{position:relative!important;display:block!important;width:128px!important;height:86px!important;font-size:0!important;transform-origin:center bottom;animation:egProductionRide 3.1s ease-in-out infinite!important;filter:drop-shadow(0 16px 18px rgba(38,18,82,.22))}
+.heroIllustration .person::before{content:"";position:absolute;left:18px;bottom:10px;width:82px;height:30px;border-radius:22px 30px 14px 16px;background:linear-gradient(135deg,#b7ff35,#7ee51b);box-shadow:inset -7px -6px 0 rgba(83,120,0,.13),0 8px 12px rgba(98,64,190,.18)}
+.heroIllustration .person::after{content:"";position:absolute;left:70px;bottom:39px;width:38px;height:36px;border:7px solid #9b63ff;border-bottom:0;border-radius:20px 20px 4px 4px;transform:rotate(-8deg);box-shadow:0 0 0 5px rgba(255,255,255,.25)}
+.heroIllustration .person{background:radial-gradient(circle at 31px 68px,#4a355e 0 11px,transparent 12px),radial-gradient(circle at 101px 68px,#4a355e 0 11px,transparent 12px),radial-gradient(circle at 31px 68px,#fff 0 4px,transparent 5px),radial-gradient(circle at 101px 68px,#fff 0 4px,transparent 5px)}
+
+@keyframes egProductionRide{0%,100%{transform:translate3d(-4px,2px,0) rotate(-1deg)}50%{transform:translate3d(7px,-7px,0) rotate(2deg)}}
+
+/* Prevent the empty chat page from showing a meaningless message composer. */
+.chatBox:not(:has(.bubble)) + .chatForm{display:none!important}
+
+/* Touch targets and readable tap areas on phones. */
+@media(max-width:700px){
+  .appShell{width:min(100%,560px);border-radius:0;}
+  .content{padding-left:16px!important;padding-right:16px!important}
+  .bottomNav{position:sticky!important;bottom:0!important;z-index:80!important}
+  .heroIllustration .person{transform:scale(.88)}
+}
+
+/* Safe-area support for modern phones. */
+@supports(padding:max(0px)){
+  .bottomNav{padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
+}

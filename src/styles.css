@@ -33,3 +33,36 @@ input,textarea,select,button{max-width:100%}
 
 @media (max-width:900px){.categoryRow{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.taskList{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.categoryRow{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.categoryRow button{min-height:72px;padding:8px 3px}.categoryRow button span{width:34px;height:34px}.categoryRow button small{font-size:7px}.taskList{grid-template-columns:1fr}}
+
+
+/* Desktop/tablet bottom navigation — centered to the same content column as the app. */
+@media (min-width:701px){
+  .bottomNav{
+    left:50% !important;
+    right:auto !important;
+    bottom:0 !important;
+    width:min(1100px,calc(100vw - 44px)) !important;
+    max-width:calc(100vw - 44px) !important;
+    margin:0 !important;
+    transform:translateX(-50%) !important;
+    padding-left:18px !important;
+    padding-right:18px !important;
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:space-evenly !important;
+  }
+  .bottomNav button{flex:1 1 0;max-width:120px;margin-inline:auto}
+  .bottomNav .postFab{flex:0 0 55px;margin-inline:20px;margin-top:-20px}
+}
+
+@media (max-width:700px){
+  .bottomNav{
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100% !important;
+    max-width:none !important;
+    transform:none !important;
+    margin:0 !important;
+  }
+}

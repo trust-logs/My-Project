@@ -89,7 +89,7 @@ svg[data-lucide="triangle-alert"],
 }
 
 /* Bright scooter headlight. */
-.heroIllustration .person:global(.unused) { box-shadow:none; }
+.heroIllustration .person.unused { box-shadow:none; }
 
 /* Persistent sparkle particles around the moving scooter. */
 .heroIllustration::before,

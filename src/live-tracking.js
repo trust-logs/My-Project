@@ -147,3 +147,46 @@ window.addEventListener('errandgo-open-tracking',async ev=>{
 });
 setInterval(showForActiveUser,5000);
 showForActiveUser();
+
+let availabilityWatch=null,availabilityLast=null,availabilityLastSent=0;
+function removeAvailabilityPill(){document.querySelector('.eg-availability-pill')?.remove()}
+async function setAvailability(status){
+  const {error}=await supabase.rpc('set_runner_status',{p_status:status});
+  if(error){toast(error.message);return false}
+  if(status==='ONLINE') startAvailabilityTracking(); else stopAvailabilityTracking();
+  renderAvailability(status);
+  return true;
+}
+function renderAvailability(status){
+  removeAvailabilityPill();
+  const pill=document.createElement('button');pill.className='eg-availability-pill';
+  if(status==='ONLINE'){pill.innerHTML='<span class="online-dot"></span><b>Online</b><small>Tap to go offline</small>';pill.addEventListener('click',()=>setAvailability('OFFLINE'))}
+  else{pill.innerHTML='<span>⚡</span><b>Available for errands</b><small>Go online</small>';pill.addEventListener('click',()=>setAvailability('ONLINE'))}
+  document.body.appendChild(pill);
+}
+function stopAvailabilityTracking(){if(availabilityWatch!=null){navigator.geolocation.clearWatch(availabilityWatch);availabilityWatch=null}availabilityLast=null;availabilityLastSent=0}
+function startAvailabilityTracking(){
+  stopAvailabilityTracking();
+  if(!navigator.geolocation){toast('GPS is unavailable. You can still receive errands without live availability.');return}
+  availabilityWatch=navigator.geolocation.watchPosition(async pos=>{
+    const c=pos.coords,now=Date.now();
+    const moved=!availabilityLast||distance(availabilityLast.lat,availabilityLast.lng,c.latitude,c.longitude)>=.1;
+    if(moved||now-availabilityLastSent>=30000){
+      availabilityLast={lat:c.latitude,lng:c.longitude};availabilityLastSent=now;
+      const {error}=await supabase.rpc('update_runner_presence',{p_latitude:c.latitude,p_longitude:c.longitude,p_accuracy:c.accuracy});
+      if(error)console.warn('[ErrandGo availability]',error);
+    }
+  },()=>toast('Location is unavailable. You can still stay online; update your location when GPS returns.'),{enableHighAccuracy:false,maximumAge:15000,timeout:15000});
+}
+async function showAvailability(){
+  if(!supabase||document.querySelector('.eg-track-modal'))return;
+  const user=await currentUser();if(!user)return;
+  const active=await activeErrands(user);if(active.length){removeAvailabilityPill();return}
+  const {data}=await supabase.from('profiles').select('runner_status').eq('id',user.id).maybeSingle();
+  const status=data?.runner_status||'OFFLINE';
+  if(!document.querySelector('.eg-availability-pill'))renderAvailability(status);
+}
+window.addEventListener('beforeunload',()=>{stopAvailabilityTracking()},{once:true});
+
+setInterval(showAvailability,7000);
+showAvailability();

@@ -123,7 +123,8 @@ async function chooseLocation(e,kind,map){
 }
 async function showForActiveUser(){
   if(!supabase)return;const user=await currentUser();if(!user)return;
-  const list=await activeErrands(user);if(!list.length)return;
+  const list=await activeErrands(user);if(!list.length){removeAvailabilityPill();document.querySelector('.eg-active-pill')?.remove();return;}
+  document.querySelector('.eg-availability-pill')?.remove();
   if(document.querySelector('.eg-active-pill'))return;
   const pill=document.createElement('button');pill.className='eg-active-pill';pill.innerHTML='<span></span> Live errand';pill.addEventListener('click',()=>openTracking(list[0]));document.body.appendChild(pill);
 }

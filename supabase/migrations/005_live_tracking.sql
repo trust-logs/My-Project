@@ -221,34 +221,31 @@ create or replace function public.find_nearby_runners(
 )
 returns table(user_id uuid,distance_km double precision)
 language sql security definer set search_path=public
-as $$
-  select p.id,
-    6371 * acos(
-      least(1,greatest(-1,
-        cos(radians(p_latitude))*cos(radians(p.last_latitude))*
-        cos(radians(p.last_longitude)-radians(p_longitude))+
-        sin(radians(p_latitude))*sin(radians(p.last_latitude))
-      ))
-    ) as distance_km
-  from public.profiles p
-  where p.runner_status='ONLINE'
-    and p.last_latitude is not null
-    and p.last_longitude is not null
-    and p.id<>auth.uid()
-    and not exists (
-      select 1 from public.errands e
-      where e.runner_id=p.id
-        and e.status not in ('completed','cancelled')
-    )
-  having 6371 * acos(
-      least(1,greatest(-1,
-        cos(radians(p_latitude))*cos(radians(p.last_latitude))*
-        cos(radians(p.last_longitude)-radians(p_longitude))+
-        sin(radians(p_latitude))*sin(radians(p.last_latitude))
-      ))
-    ) <= greatest(0.5,p_radius_km)
-  order by 2;
-$$;
+as $
+  select x.user_id,x.distance_km
+  from (
+    select p.id as user_id,
+      6371 * acos(
+        least(1,greatest(-1,
+          cos(radians(p_latitude))*cos(radians(p.last_latitude))*
+          cos(radians(p.last_longitude)-radians(p_longitude))+
+          sin(radians(p_latitude))*sin(radians(p.last_latitude))
+        ))
+      ) as distance_km
+    from public.profiles p
+    where p.runner_status='ONLINE'
+      and p.last_latitude is not null
+      and p.last_longitude is not null
+      and p.id<>auth.uid()
+      and not exists (
+        select 1 from public.errands e
+        where e.runner_id=p.id
+          and e.status not in ('completed','cancelled')
+      )
+  ) x
+  where x.distance_km <= greatest(0.5,p_radius_km)
+  order by x.distance_km;
+$;
 grant execute on function public.find_nearby_runners(double precision,double precision,double precision) to authenticated;
 
 do $$

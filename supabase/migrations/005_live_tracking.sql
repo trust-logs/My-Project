@@ -187,6 +187,28 @@ end;
 $$;
 grant execute on function public.set_runner_status(text) to authenticated;
 
+create or replace function public.update_runner_presence(
+  p_latitude double precision,
+  p_longitude double precision,
+  p_accuracy double precision default null
+) returns public.runner_presence
+language plpgsql security definer set search_path=public
+as $presence$
+declare r public.runner_presence;
+begin
+  if not exists(select 1 from public.runner_presence where runner_id=auth.uid() and status='ONLINE') then
+    raise exception 'Runner is not online';
+  end if;
+  insert into public.runner_presence(runner_id,latitude,longitude,accuracy,status,updated_at)
+  values(auth.uid(),p_latitude,p_longitude,p_accuracy,'ONLINE',now())
+  on conflict (runner_id) do update set latitude=excluded.latitude,longitude=excluded.longitude,accuracy=excluded.accuracy,status='ONLINE',updated_at=now()
+  returning * into r;
+  return r;
+end;
+$presence$;
+grant execute on function public.update_runner_presence(double precision,double precision,double precision) to authenticated;
+
+
 create or replace function public.transition_errand_status(p_errand_id uuid,p_status text)
 returns public.errands
 language plpgsql security definer set search_path=public

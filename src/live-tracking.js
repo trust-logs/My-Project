@@ -45,7 +45,7 @@ function statusLabel(s){
 function trackingMarkup(e,user){
   const active=e.status!=='completed'&&e.status!=='cancelled';
   const owner=user.id===e.customer_id;
-  return `<div class="eg-track-modal" role="dialog" aria-modal="true"><div class="eg-track-card"><button class="eg-track-close" aria-label="Close">×</button><div class="eg-track-head"><div><span class="eg-track-kicker">LIVE ERRAND</span><h2>${esc(e.title)}</h2><p>${esc(statusLabel(e.status))}</p></div><span class="eg-live-dot">${active?'LIVE':'DONE'}</span></div><div class="eg-map-wrap"><div class="eg-map" id="eg-map"></div><button class="eg-recenter" type="button">◎ Recenter</button></div><div class="eg-track-grid"><div><small>Pickup</small><b>${esc(e.pickup_address||'Set pickup location')}</b></div><div><small>Destination</small><b>${esc(e.delivery_address||'Set destination')}</b></div></div><div class="eg-track-stats"><span><b id="eg-distance">—</b><small>Distance</small></span><span><b id="eg-eta">—</b><small>ETA</small></span><span><b id="eg-last">Waiting</b><small>Location</small></span></div>${owner&&active?'<div class="eg-location-setup"><button data-location="pickup">Set pickup on map</button><button data-location="destination">Set destination on map</button></div>':''}<div class="eg-status-line"><span class="eg-status-dot"></span><strong>${esc(statusLabel(e.status))}</strong><span class="eg-status-note">Live location updates are protected to this errand.</span></div><div class="eg-track-actions">${!owner&&e.runner_id?'<button data-runner-status="runner_going_to_pickup">Heading to pickup</button>':''}${!owner&&e.status==='runner_going_to_pickup'?'<button data-runner-status="arrived_at_pickup">Arrived at pickup</button>':''}${!owner&&e.status==='arrived_at_pickup'?'<button data-runner-status="in_progress">Start errand</button>':''}${!owner&&e.status==='in_progress'?'<button data-runner-status="going_to_destination">Heading to destination</button>':''}${!owner&&e.status==='going_to_destination'?'<button data-runner-status="arrived_at_destination">Arrived at destination</button>':''}${!owner&&['going_to_destination','arrived_at_destination','in_progress'].includes(e.status)?'<button data-runner-status="completed">Complete errand</button>':''}</div></div></div>`;
+  return `<div class="eg-track-modal" role="dialog" aria-modal="true"><div class="eg-track-card"><button class="eg-track-close" aria-label="Close">×</button><div class="eg-track-head"><div><span class="eg-track-kicker">LIVE ERRAND</span><h2>${esc(e.title)}</h2><p>${esc(statusLabel(e.status))}</p></div><span class="eg-live-dot">${active?'LIVE':'DONE'}</span></div><div class="eg-map-wrap"><div class="eg-map" id="eg-map"></div><button class="eg-recenter" type="button">◎ Recenter</button></div><div class="eg-track-grid"><div><small>Pickup</small><b>${esc(e.pickup_address||'Set pickup location')}</b></div><div><small>Destination</small><b>${esc(e.delivery_address||'Set destination')}</b></div></div><div class="eg-track-stats"><span><b id="eg-distance">—</b><small>Distance</small></span><span><b id="eg-eta">—</b><small>ETA</small></span><span><b id="eg-last">Waiting</b><small>Location</small></span></div>${owner&&active?'<div class="eg-location-setup"><button data-location="pickup">Set pickup on map</button><button data-location="destination">Set destination on map</button></div><div class="eg-address-search"><input data-geocode-input placeholder="Search pickup or destination"/><select data-geocode-kind><option value="pickup">Pickup</option><option value="destination">Destination</option></select><button data-geocode-search>Search</button></div><div class="eg-geocode-results"></div>':''}<div class="eg-status-line"><span class="eg-status-dot"></span><strong>${esc(statusLabel(e.status))}</strong><span class="eg-status-note">Live location updates are protected to this errand.</span></div><div class="eg-track-actions">${!owner&&e.runner_id?'<button data-runner-status="runner_going_to_pickup">Heading to pickup</button>':''}${!owner&&e.status==='runner_going_to_pickup'?'<button data-runner-status="arrived_at_pickup">Arrived at pickup</button>':''}${!owner&&e.status==='arrived_at_pickup'?'<button data-runner-status="in_progress">Start errand</button>':''}${!owner&&e.status==='in_progress'?'<button data-runner-status="going_to_destination">Heading to destination</button>':''}${!owner&&e.status==='going_to_destination'?'<button data-runner-status="arrived_at_destination">Arrived at destination</button>':''}${!owner&&['going_to_destination','arrived_at_destination','in_progress'].includes(e.status)?'<button data-runner-status="completed">Complete errand</button>':''}</div></div></div>`;
 }
 async function ensureMapCss(){}
 async function mountMap(e,user){
@@ -73,6 +73,14 @@ async function mountMap(e,user){
       await subscribeRunner(e,map,runnerMarker);
     }
     document.querySelectorAll('[data-location]').forEach(btn=>btn.addEventListener('click',()=>chooseLocation(e,btn.dataset.location,map)));
+    document.querySelector('[data-geocode-search]')?.addEventListener('click',async()=>{
+      const input=document.querySelector('[data-geocode-input]'),kind=document.querySelector('[data-geocode-kind]')?.value||'pickup',box=document.querySelector('.eg-geocode-results');
+      if(!input?.value.trim()||!box)return;
+      box.innerHTML='<span>Searching…</span>';
+      try{const results=await geocode(input.value.trim());box.innerHTML=results.length?results.map((r,i)=>`<button data-result-index="${i}">${esc(r.label)}</button>`).join(''):'<span>No matching places found.</span>';
+        box.querySelectorAll('[data-result-index]').forEach((btn,i)=>btn.addEventListener('click',async()=>{const r=results[i];await saveChosenLocation(e,kind,r.lat,r.lng,r.label);}));
+      }catch(err){box.innerHTML='<span>Address search is unavailable right now.</span>';console.warn(err)}
+    });
     return ()=>{markers.forEach(m=>m.remove());map.remove();};
   }catch(err){console.error(err);mapEl.innerHTML='<div class="eg-map-missing"><b>Map could not load.</b><span>Check the Mapbox token and network connection.</span></div>'}
 }
@@ -107,6 +115,12 @@ async function startRunnerTracking(e,map,marker){
   window.addEventListener('beforeunload',()=>navigator.geolocation.clearWatch(watch),{once:true});
 }
 function distance(a,b,c,d){const R=6371;const p1=a*Math.PI/180,p2=c*Math.PI/180,dp=(c-a)*Math.PI/180,dl=(d-b)*Math.PI/180;const x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+async function saveChosenLocation(e,kind,lat,lng,address){
+  const user=await currentUser();if(!user)return;
+  const field=kind==='pickup'?{pickup_latitude:lat,pickup_longitude:lng,pickup_address:address}:{delivery_latitude:lat,delivery_longitude:lng,delivery_address:address};
+  const {error}=await supabase.from('errands').update(field).eq('id',e.id).eq('customer_id',user.id);
+  if(error)toast(error.message);else{toast(`${kind==='pickup'?'Pickup':'Destination'} saved.`);window.location.reload();}
+}
 async function chooseLocation(e,kind,map){
   if(!navigator.geolocation){toast('Your device does not provide GPS.');return;}
   toast(`Tap the map to set ${kind==='pickup'?'pickup':'destination'}.`);

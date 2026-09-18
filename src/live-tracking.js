@@ -1,4 +1,4 @@
-import { supabase } from './src/lib/supabase.js';
+import { supabase } from './lib/supabase.js';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_PUBLIC_TOKEN || import.meta.env.VITE_MAPBOX_TOKEN || '';
 let mapboxPromise;

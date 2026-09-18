@@ -66,3 +66,49 @@ input,textarea,select,button{max-width:100%}
     margin:0 !important;
   }
 }
+
+
+/* Floating motion for the centered bottom navigation. */
+@keyframes errandGoNavFloat{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-7px)}
+}
+@keyframes errandGoNavFloatMobile{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@media (min-width:701px){
+  .bottomNav{
+    animation:errandGoNavFloat 4.5s ease-in-out infinite;
+    will-change:transform;
+  }
+  .bottomNav button{
+    transition:transform .25s ease,filter .25s ease;
+  }
+  .bottomNav button:hover{
+    transform:translateY(-4px);
+    filter:brightness(1.03);
+  }
+  .bottomNav .postFab{
+    animation:errandGoFabFloat 2.8s ease-in-out infinite;
+  }
+}
+@keyframes errandGoFabFloat{
+  0%,100%{transform:translateY(-20px) scale(1)}
+  50%{transform:translateY(-26px) scale(1.04)}
+}
+@media (max-width:700px){
+  .bottomNav{
+    animation:errandGoNavFloatMobile 4.5s ease-in-out infinite;
+    will-change:transform;
+  }
+  .bottomNav button{
+    transition:transform .25s ease,filter .25s ease;
+  }
+  .bottomNav button:hover{
+    transform:translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .bottomNav,.bottomNav .postFab{animation:none !important}
+}

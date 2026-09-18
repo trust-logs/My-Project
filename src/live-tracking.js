@@ -14,7 +14,7 @@ function loadMapbox(){
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>v==null||v===''?null:Number(v);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-function toast(msg){window.dispatchEvent(new CustomEvent('errandgo-toast',{detail:msg}));}
+function toast(msg){let el=document.querySelector('.eg-live-toast');if(!el){el=document.createElement('div');el.className='eg-live-toast';document.body.appendChild(el)}el.textContent=msg;el.classList.add('show');clearTimeout(window.__egLiveToast);window.__egLiveToast=setTimeout(()=>el.classList.remove('show'),3200)}
 async function currentUser(){const {data}=await supabase.auth.getUser();return data?.user||null}
 async function activeErrands(user){
   const {data,error}=await supabase.from('errands').select('*').or(`customer_id.eq.${user.id},runner_id.eq.${user.id}`).in('status',['accepted','runner_assigned','runner_going_to_pickup','arrived_at_pickup','in_progress','going_to_destination','arrived_at_destination']).order('updated_at',{ascending:false}).limit(5);
@@ -83,8 +83,10 @@ async function drawRoute(map,from,to){
 async function latestRunner(errandId){const{data}=await supabase.from('runner_locations').select('*').eq('errand_id',errandId).order('recorded_at',{ascending:false}).limit(1).maybeSingle();return data||null}
 async function subscribeRunner(e,map,marker){
   if(!marker)return;
-  const ch=supabase.channel(`runner-location-${e.id}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'runner_locations',filter:`errand_id=eq.${e.id}`},payload=>{
-    const p=payload.new;if(!p)return;const next=[p.longitude,p.latitude];const current=marker.getLngLat();animateMarker(marker,[current.lng,current.lat],next,900);document.getElementById('eg-last')?.replaceChildren(document.createTextNode('Just now'));map.easeTo({center:next,duration:650});}).subscribe();
+  const ch=supabase.channel(`runner-location-${e.id}`).on('postgres_changes',{event:'INSERT',schema:'public',table:'runner_locations',filter:`errand_id=eq.${e.id}`},async payload=>{
+    const p=payload.new;if(!p)return;const next=[p.longitude,p.latitude];const current=marker.getLngLat();animateMarker(marker,[current.lng,current.lat],next,900);document.getElementById('eg-last')?.replaceChildren(document.createTextNode('Just now'));map.easeTo({center:next,duration:650});
+    const target=e.status==='runner_going_to_pickup'||e.status==='arrived_at_pickup'?([e.pickup_longitude,e.pickup_latitude]):([e.delivery_longitude,e.delivery_latitude]);
+    if(target[0]!=null&&target[1]!=null){try{const route=await getRoute(next,target);if(route){document.getElementById('eg-distance').textContent=`${(route.distance/1000).toFixed(1)} km`;document.getElementById('eg-eta').textContent=`${Math.max(1,Math.round(route.duration/60))} min`}}catch{}}}).subscribe();
   window.__egTrackChannel=ch;
 }
 function animateMarker(marker,from,to,duration){const started=performance.now();function frame(now){const t=Math.min(1,(now-started)/duration);const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;marker.setLngLat([from[0]+(to[0]-from[0])*ease,from[1]+(to[1]-from[1])*ease]);if(t<1)requestAnimationFrame(frame)}requestAnimationFrame(frame)}
@@ -132,6 +134,15 @@ window.addEventListener('errandgo-open-tracking',async ev=>{
   const wrap=document.createElement('div');wrap.innerHTML=trackingMarkup(ev.detail,user);document.body.appendChild(wrap.firstElementChild);
   const modal=document.querySelector('.eg-track-modal');const close=()=>{if(window.__egTrackChannel)supabase.removeChannel(window.__egTrackChannel);if(window.__egGeoWatch)navigator.geolocation.clearWatch(window.__egGeoWatch);modal?.remove();modalCleanup=null};modalCleanup=close;
   modal.querySelector('.eg-track-close').addEventListener('click',close);
+  modal.querySelectorAll('[data-runner-status]').forEach(btn=>btn.addEventListener('click',async()=>{
+    btn.disabled=true;
+    const next=btn.dataset.runnerStatus;
+    const {data,error}=await supabase.rpc('transition_errand_status',{p_errand_id:ev.detail.id,p_status:next});
+    if(error){toast(error.message);btn.disabled=false;return}
+    toast(`Errand updated: ${statusLabel(next)}`);
+    close();
+    setTimeout(()=>openTracking(data),120);
+  }));
   await mountMap(ev.detail,user);
 });
 setInterval(showForActiveUser,5000);

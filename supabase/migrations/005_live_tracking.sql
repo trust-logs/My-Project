@@ -283,7 +283,7 @@ as $nearby$
       and p.runner_id<>auth.uid()
       and not exists (
         select 1 from public.errands e
-        where e.runner_id=p.id
+        where e.runner_id=p.runner_id
           and e.status not in ('completed','cancelled')
       )
   ) x

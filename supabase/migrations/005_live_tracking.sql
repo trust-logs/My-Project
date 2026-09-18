@@ -221,7 +221,7 @@ create or replace function public.find_nearby_runners(
 )
 returns table(user_id uuid,distance_km double precision)
 language sql security definer set search_path=public
-as $
+as $nearby$
   select x.user_id,x.distance_km
   from (
     select p.id as user_id,
@@ -245,7 +245,7 @@ as $
   ) x
   where x.distance_km <= greatest(0.5,p_radius_km)
   order by x.distance_km;
-$;
+$nearby$;
 grant execute on function public.find_nearby_runners(double precision,double precision,double precision) to authenticated;
 
 do $$

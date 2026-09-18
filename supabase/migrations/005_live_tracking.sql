@@ -36,6 +36,24 @@ alter table public.errands add column if not exists started_at timestamptz;
 alter table public.errands add column if not exists completed_at timestamptz;
 alter table public.errands add column if not exists accepted_at timestamptz;
 alter table public.errands add column if not exists updated_at timestamptz default now();
+create table if not exists public.runner_presence (
+  runner_id uuid primary key references public.profiles(id) on delete cascade,
+  latitude double precision,
+  longitude double precision,
+  accuracy double precision,
+  status text not null default 'OFFLINE' check (status in ('OFFLINE','ONLINE','BUSY')),
+  updated_at timestamptz not null default now()
+);
+alter table public.runner_presence enable row level security;
+drop policy if exists runner_presence_self on public.runner_presence;
+drop policy if exists runner_presence_admin on public.runner_presence;
+create policy runner_presence_self on public.runner_presence for all to authenticated
+using (runner_id=auth.uid()) with check (runner_id=auth.uid());
+create policy runner_presence_admin on public.runner_presence for select to authenticated
+using (exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+create index if not exists runner_presence_status_idx on public.runner_presence(status);
+create index if not exists runner_presence_coords_idx on public.runner_presence(latitude,longitude);
+
 
 -- Replace the legacy status check so the full delivery lifecycle is valid.
 do $$
@@ -141,9 +159,10 @@ begin
   values(auth.uid(),p_errand_id,p_latitude,p_longitude,p_heading,p_speed,p_accuracy)
   returning * into r;
 
-  update public.profiles
-  set last_latitude=p_latitude,last_longitude=p_longitude,last_location_at=now(),runner_status='BUSY',updated_at=now()
-  where id=auth.uid();
+  update public.profiles set runner_status='BUSY',updated_at=now() where id=auth.uid();
+  insert into public.runner_presence(runner_id,latitude,longitude,accuracy,status,updated_at)
+  values(auth.uid(),p_latitude,p_longitude,p_accuracy,'BUSY',now())
+  on conflict (runner_id) do update set latitude=excluded.latitude,longitude=excluded.longitude,accuracy=excluded.accuracy,status='BUSY',updated_at=now();
 
   return r;
 end;
@@ -160,6 +179,9 @@ begin
   update public.profiles set runner_status=upper(p_status), updated_at=now()
   where id=auth.uid() returning * into r;
   if r.id is null then raise exception 'Profile not found'; end if;
+  insert into public.runner_presence(runner_id,status,updated_at)
+  values(auth.uid(),upper(p_status),now())
+  on conflict (runner_id) do update set status=excluded.status,updated_at=now();
   return r;
 end;
 $$;
@@ -224,19 +246,19 @@ language sql security definer set search_path=public
 as $nearby$
   select x.user_id,x.distance_km
   from (
-    select p.id as user_id,
+    select p.runner_id as user_id,
       6371 * acos(
         least(1,greatest(-1,
-          cos(radians(p_latitude))*cos(radians(p.last_latitude))*
-          cos(radians(p.last_longitude)-radians(p_longitude))+
-          sin(radians(p_latitude))*sin(radians(p.last_latitude))
+          cos(radians(p_latitude))*cos(radians(p.latitude))*
+          cos(radians(p.longitude)-radians(p_longitude))+
+          sin(radians(p_latitude))*sin(radians(p.latitude))
         ))
       ) as distance_km
-    from public.profiles p
-    where p.runner_status='ONLINE'
-      and p.last_latitude is not null
-      and p.last_longitude is not null
-      and p.id<>auth.uid()
+    from public.runner_presence p
+    where p.status='ONLINE'
+      and p.latitude is not null
+      and p.longitude is not null
+      and p.runner_id<>auth.uid()
       and not exists (
         select 1 from public.errands e
         where e.runner_id=p.id
@@ -248,8 +270,11 @@ as $nearby$
 $nearby$;
 grant execute on function public.find_nearby_runners(double precision,double precision,double precision) to authenticated;
 
-do $$
+do $
 begin
+  if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='runner_presence') then
+    alter publication supabase_realtime add table public.runner_presence;
+  end if;
   if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='runner_locations') then
     alter publication supabase_realtime add table public.runner_locations;
   end if;

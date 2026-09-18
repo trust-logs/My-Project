@@ -292,7 +292,7 @@ as $nearby$
 $nearby$;
 grant execute on function public.find_nearby_runners(double precision,double precision,double precision) to authenticated;
 
-do $
+do $$
 begin
   if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='runner_presence') then
     alter publication supabase_realtime add table public.runner_presence;

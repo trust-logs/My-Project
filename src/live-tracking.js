@@ -37,9 +37,21 @@ async function geocode(q){
   return (j.features||[]).map(f=>({label:f.properties?.full_address||f.properties?.name||f.place_name||'Location',lng:f.geometry.coordinates[0],lat:f.geometry.coordinates[1]}));
 }
 function markerEl(kind,label){
-  const el=document.createElement('div');el.className=`eg-map-marker ${kind}`;
-  el.innerHTML=kind==='runner'?'<div class="eg-runner-pulse"></div><span class="eg-runner-icon">🛵</span>':kind==='pickup'?'<span>●</span>':kind==='destination'?'<span>◆</span>':'<span>⌖</span>';
-  el.title=label||kind;return el;
+  const el=document.createElement('div');
+  el.className=`eg-map-marker ${kind}`;
+  const inner=document.createElement('div');
+  inner.className='eg-marker-inner';
+  inner.innerHTML=kind==='runner'
+    ? '<div class="eg-runner-pulse"></div><span class="eg-runner-icon" aria-hidden="true">🛵</span>'
+    : kind==='pickup'
+      ? '<span class="eg-marker-glyph">●</span>'
+      : kind==='destination'
+        ? '<span class="eg-marker-glyph">◆</span>'
+        : '<span class="eg-marker-glyph">⌖</span>';
+  el.appendChild(inner);
+  el.title=label||kind;
+  el.setAttribute('aria-label',label||kind);
+  return el;
 }
 function statusLabel(s){
   return ({open:'Requested',requested:'Requested',searching_for_runner:'Finding a runner',accepted:'Runner assigned',runner_assigned:'Runner assigned',runner_going_to_pickup:'Going to pickup',arrived_at_pickup:'Arrived at pickup',in_progress:'Errand in progress',going_to_destination:'Going to destination',arrived_at_destination:'Arrived at destination',completed:'Completed',cancelled:'Cancelled',disputed:'Disputed'})[s]||s;
@@ -158,9 +170,19 @@ async function mountMap(e,user){
     let runnerMarker=add(runnerStart?[runnerStart.longitude,runnerStart.latitude]:null,'runner','Runner');
 
     const fit=()=>{const pts=[pickup,destination,runnerMarker?.getLngLat&&[runnerMarker.getLngLat().lng,runnerMarker.getLngLat().lat]].filter(Boolean);if(pts.length>1){const b=pts.reduce((b,p)=>b.extend(p),new mapbox.LngLatBounds(pts[0],pts[0]));map.fitBounds(b,{padding:{top:100,bottom:300,left:45,right:45},maxZoom:16,duration:900,pitch:35})}};
-    const follow=()=>{const p=runnerMarker?.getLngLat();if(p){map.easeTo({center:p,zoom:16,pitch:48,duration:800})}};
+    const follow=()=>{
+      window.__egTrackingFollowing=true;
+      const p=runnerMarker?.getLngLat();
+      if(p)map.easeTo({center:p,zoom:16,pitch:48,duration:800});
+    };
+    map.on('dragstart',()=>{window.__egTrackingFollowing=false});
+    map.on('zoomstart',()=>{window.__egTrackingFollowing=false});
 
-    map.once('load',async()=>{await drawRoute(map,pickup,destination,runnerStart);fit()});
+    map.once('load',async()=>{
+      const routeTarget=['runner_going_to_pickup','arrived_at_pickup'].includes(e.status)?pickup:destination;
+      await drawRoute(map,pickup||runnerStart&&[runnerStart.longitude,runnerStart.latitude],routeTarget,runnerStart);
+      fit();
+    });
 
     document.querySelector('[data-map-recenter]')?.addEventListener('click',fit);
     document.querySelector('[data-map-follow]')?.addEventListener('click',follow);
@@ -217,7 +239,9 @@ async function subscribeRunner(e,map,marker){
     document.getElementById('eg-last')?.replaceChildren(document.createTextNode('Live'));
     document.getElementById('eg-live-age')?.replaceChildren(document.createTextNode('Just now'));
     document.getElementById('eg-speed')?.replaceChildren(document.createTextNode(p.speed!=null?`${Math.round(Number(p.speed)*3.6)} km/h`:'—'));
-    map.easeTo({center:next,duration:850,zoom:15.5,pitch:42});
+    if(window.__egTrackingFollowing){
+      map.easeTo({center:next,duration:850,zoom:15.5,pitch:42});
+    }
     const target=e.status==='runner_going_to_pickup'||e.status==='arrived_at_pickup'?[e.pickup_longitude,e.pickup_latitude]:[e.delivery_longitude,e.delivery_latitude];
     if(target[0]!=null&&target[1]!=null){
       try{const route=await getRoute(next,target);if(route){

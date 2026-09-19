@@ -31,10 +31,51 @@ async function getRoute(from,to){
 }
 async function geocode(q){
   if(!TOKEN||!q)return [];
-  const url=`https://api.mapbox.com/search/geocode/v6/forward?q=${encodeURIComponent(q)}&limit=5&autocomplete=true&access_token=${encodeURIComponent(TOKEN)}`;
-  const r=await fetch(url);if(!r.ok)throw new Error('Address search unavailable');
+  const query=encodeURIComponent(q.trim());
+
+  // Search Box is Mapbox's global search service for addresses + POIs.
+  // Unlike Geocoding v6, it can return places such as businesses,
+  // landmarks, airports, hotels and other points of interest.
+  const searchBoxUrl=`https://api.mapbox.com/search/searchbox/v1/forward?q=${query}&limit=10&language=en&show_closed_pois=true&access_token=${encodeURIComponent(TOKEN)}`;
+
+  try{
+    const r=await fetch(searchBoxUrl);
+    if(r.ok){
+      const j=await r.json();
+      const results=(j.features||[])
+        .filter(f=>Array.isArray(f.geometry?.coordinates)&&f.geometry.coordinates.length>=2)
+        .map(f=>{
+          const p=f.properties||{};
+          const name=p.name||p.name_preferred||'Location';
+          const context=p.full_address||p.place_formatted||p.address||'';
+          return {
+            id:p.mapbox_id||f.id||`${f.geometry.coordinates[0]},${f.geometry.coordinates[1]}`,
+            label:context&&context!==name?`${name}, ${context}`:name,
+            lng:Number(f.geometry.coordinates[0]),
+            lat:Number(f.geometry.coordinates[1]),
+            type:p.feature_type||'location'
+          };
+        });
+      if(results.length)return results;
+    }
+  }catch(err){
+    console.warn('[ErrandGo search box]',err);
+  }
+
+  // Reliable fallback for countries, cities, regions, streets and addresses.
+  const fallbackUrl=`https://api.mapbox.com/search/geocode/v6/forward?q=${query}&limit=10&autocomplete=false&access_token=${encodeURIComponent(TOKEN)}`;
+  const r=await fetch(fallbackUrl);
+  if(!r.ok)throw new Error('Worldwide location search unavailable');
   const j=await r.json();
-  return (j.features||[]).map(f=>({label:f.properties?.full_address||f.properties?.name||f.place_name||'Location',lng:f.geometry.coordinates[0],lat:f.geometry.coordinates[1]}));
+  return (j.features||[])
+    .filter(f=>Array.isArray(f.geometry?.coordinates)&&f.geometry.coordinates.length>=2)
+    .map(f=>({
+      id:f.properties?.mapbox_id||f.id,
+      label:f.properties?.full_address||f.properties?.name_preferred||f.properties?.name||'Location',
+      lng:Number(f.geometry.coordinates[0]),
+      lat:Number(f.geometry.coordinates[1]),
+      type:f.properties?.feature_type||'location'
+    }));
 }
 function markerEl(kind,label){
   const el=document.createElement('div');
@@ -199,13 +240,28 @@ async function mountMap(e,user){
     });
     document.querySelector('[data-safety]')?.addEventListener('click',()=>toast('Safety tools: use Support if you need immediate help.'));
 
-    document.querySelector('[data-geocode-search]')?.addEventListener('click',async()=>{
+    const runPlaceSearch=async()=>{
       const input=document.querySelector('[data-geocode-input]'),kind=document.querySelector('[data-geocode-kind]')?.value||'pickup',box=document.querySelector('.eg-geocode-results');
       if(!input?.value.trim()||!box)return;
-      box.innerHTML='<span>Searching…</span>';
-      try{const results=await geocode(input.value.trim());box.innerHTML=results.length?results.map((r,i)=>`<button data-result-index="${i}">${esc(r.label)}</button>` ).join(''):'<span>No matching places found.</span>';
-        box.querySelectorAll('[data-result-index]').forEach((btn,i)=>btn.addEventListener('click',async()=>{const r=results[i];await saveChosenLocation(e,kind,r.lat,r.lng,r.label);}));
-      }catch(err){box.innerHTML='<span>Address search is unavailable right now.</span>';console.warn(err)}
+      box.innerHTML='<span>Searching worldwide…</span>';
+      try{
+        const results=await geocode(input.value.trim());
+        box.innerHTML=results.length
+          ?results.map((r,i)=>`<button type="button" data-result-index="${i}"><b>${esc(r.label.split(',')[0])}</b><small>${esc(r.label.split(',').slice(1).join(',').trim()||r.type)}</small></button>`).join('')
+          :'<span>No matching place found anywhere in the searchable map data.</span>';
+        box.querySelectorAll('[data-result-index]').forEach((btn,i)=>btn.addEventListener('click',async()=>{
+          const r=results[i];
+          await saveChosenLocation(e,kind,r.lat,r.lng,r.label);
+          box.innerHTML=`<span>Selected: ${esc(r.label)}</span>`;
+        }));
+      }catch(err){
+        box.innerHTML='<span>Worldwide place search is temporarily unavailable.</span>';
+        console.warn('[ErrandGo search]',err);
+      }
+    };
+    document.querySelector('[data-geocode-search]')?.addEventListener('click',runPlaceSearch);
+    document.querySelector('[data-geocode-input]')?.addEventListener('keydown',ev=>{
+      if(ev.key==='Enter'){ev.preventDefault();runPlaceSearch();}
     });
 
     if(e.status!=='completed'&&e.status!=='cancelled'&&user.id===e.runner_id) await startRunnerTracking(e,map,runnerMarker);
